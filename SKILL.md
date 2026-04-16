@@ -81,6 +81,9 @@ npm install viem dotenv
 # Check configuration
 node scripts/check-configuration.js
 
+# Safe simulation testing (no transactions)
+node scripts/test-realistic-payment.js
+
 # Upfront payment with default 20x collateral
 node scripts/cli.js --amount 0.1 --recipient 0x... --buffer 8
 

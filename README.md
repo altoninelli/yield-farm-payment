@@ -108,6 +108,13 @@ node scripts/cli.js --mode upfront --amount 0.5 --recipient 0x... --collateral 1
 node scripts/check-configuration.js
 ```
 
+### Simulation testing (safe - no transactions)
+```bash
+# Run realistic payment calculations without executing
+# Shows recovery times, collateral comparisons, and ready-to-use commands
+node scripts/test-realistic-payment.js
+```
+
 ## 🔧 Configuration
 
 ### Environment Variables (.env)
