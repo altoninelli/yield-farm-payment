@@ -44,12 +44,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/yield-farm-payment.git"
+    "url": "https://github.com/altoninelli/yield-farm-payment.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/yield-farm-payment/issues"
+    "url": "https://github.com/altoninelli/yield-farm-payment/issues"
   },
-  "homepage": "https://github.com/yourusername/yield-farm-payment#readme",
+  "homepage": "https://github.com/altoninelli/yield-farm-payment#readme",
   "bin": {
     "yield-farm-payment": "./scripts/cli.js"
   },
