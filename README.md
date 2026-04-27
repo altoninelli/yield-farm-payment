@@ -1,2 +1,166 @@
-# yield-farm-payment
-Pay any seller at ZERO net cost. Our high-efficiency logic on Base L2 offsets network fees by pairing payments with low-risk, stablecoin-based yield investments. Achieve professional-grade Net-Zero transactions with automated cost recovery.
+# 🌾 YieldFarmPayment v1.0
+
+**DeFi Immediate Payment System with Capital Recovery via Aave V3**
+
+Pay recipients immediately on Base network, then recover your capital over time through Aave V3 yield farming.
+
+[![OpenClaw Skill](https://img.shields.io/badge/OpenClaw-Skill-blue)](https://clawhub.ai)
+[![Base Network](https://img.shields.io/badge/Network-Base-0052FF)](https://base.org)
+[![Aave V3](https://img.shields.io/badge/Integration-Aave%20V3-1B5AE3)](https://aave.com)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+## ⚠️ v1.0 — Upfront Mode Only
+
+v1.0 supports **Upfront Mode** only (immediate payment to recipient + capital recovery).
+Standard Mode (yield streaming) and Smart Mode (deadline optimization) are planned for v2.0.
+
+## 🎯 What Problem Does This Solve?
+
+Traditional payments require upfront capital that's gone forever. YieldFarmPayment allows you to:
+- **Pay immediately** — Recipient gets paid right away
+- **Recover your capital** — Collateral deposited in Aave V3 generates yield
+- **Flexible collateral** — 3x to 20x multiplier (default 20x for ~1 year recovery)
+- **DeFi-powered** — Earn yield on Aave V3 while recovering payment costs
+
+## 🚀 Quick Demo
+
+```bash
+# Clone and setup
+git clone https://github.com/yourusername/yield-farm-payment.git
+cd yield-farm-payment
+npm install
+cp .env.example .env
+# Edit .env with your RPC and private key
+
+# Pay 0.1 USDC with default 20x collateral (~1 year recovery)
+node scripts/cli.js --amount 0.1 --recipient 0x... --buffer 8
+```
+
+## 📊 How Upfront Mode Works
+
+```
+1. You want to pay 0.1 USDC to a seller
+2. System locks 2.16 USDC total (0.1 × 20x × 1.08 buffer)
+3. 0.1 USDC is transferred IMMEDIATELY to seller
+4. 2.06 USDC is deposited in Aave V3
+5. Aave generates ~3% APY = 0.0618 USDC/year on the deposit
+6. You recover the 0.1 USDC payment in ~592 days (~1.6 years)
+7. After recovery, the 2.06 USDC collateral is still yours in Aave
+```
+
+### ⚡ Key Insight: Recovery = Payment Amount, NOT Collateral
+
+The amount you need to recover is the **payment sent to the seller** (0.1 USDC), not the total collateral (2.16 USDC). The collateral stays in your Aave position and continues earning yield.
+
+### 📊 Recovery Times by Collateral Multiplier
+
+For a 0.1 USDC payment at 3% APY (conservative estimate):
+
+| Multiplier | Aave Deposit | Annual Yield | Recovery Time |
+|------------|-------------|--------------|---------------|
+| 3×         | 0.224 USDC  | 0.0067 USDC  | ~15 years     |
+| 5×         | 0.440 USDC  | 0.0132 USDC  | ~7.5 years    |
+| 10×        | 0.980 USDC  | 0.0294 USDC  | ~3.4 years    |
+| **20× (default)** | **2.060 USDC** | **0.0618 USDC** | **~1.6 years** |
+
+**Higher collateral = faster recovery** because more capital in Aave generates more yield.
+
+**Note:** 3% APY is a conservative estimate. Actual Aave V3 rates may vary.
+
+## ✨ Key Features
+
+- **Immediate Payment**: Seller gets paid right away
+- **Capital Recovery**: Recover payment cost through Aave yield
+- **Flexible Collateral**: 3x to 20x multiplier with configurable buffer
+- **Aave V3 Integration**: Deposit USDC to earn yield on Base
+- **Robust Transaction Handling**: Automatic retry, gas optimization
+- **Professional CLI**: Full-featured command line interface
+
+## 🛠️ Installation
+
+### Prerequisites
+- Node.js 18+
+- Base network wallet with ETH for gas
+- USDC tokens for collateral
+
+### Setup
+```bash
+npm install
+cp .env.example .env
+# Edit .env with your configuration
+node scripts/check-configuration.js
+```
+
+## 📖 Usage
+
+### Default (20x collateral, ~1 year recovery)
+```bash
+node scripts/cli.js --amount 0.1 --recipient 0x... --buffer 8
+```
+
+### Custom collateral
+```bash
+node scripts/cli.js --mode upfront --amount 0.5 --recipient 0x... --collateral 10 --buffer 5
+```
+
+### Check configuration
+```bash
+node scripts/check-configuration.js
+```
+
+### Simulation testing (safe - no transactions)
+```bash
+# Run realistic payment calculations without executing
+# Shows recovery times, collateral comparisons, and ready-to-use commands
+node scripts/test-realistic-payment.js
+```
+
+## 🔧 Configuration
+
+### Environment Variables (.env)
+```bash
+PRIVATE_KEY=0x...                    # Your wallet private key
+BASE_RPC_URL=https://mainnet.base.org  # Base network RPC
+
+# Aave V3 Contracts (Base)
+AAVE_V3_POOL_ADDRESS=0x794a61358D6845594F94dc1DB02A252b5b4814aD
+USDC_ADDRESS=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+AAVE_USDC_TOKEN_ADDRESS=0x4e65fE4DbA92790696d040ac24Aa414708F5c0AB
+
+# Settings
+SKILL_FEE_USDC=0.20                  # Fee per skill call
+DEFAULT_COLLATERAL_MULTIPLIER=20     # 20x for ~1.6 year recovery
+DEFAULT_BUFFER_PERCENTAGE=8          # 8% safety buffer
+ESTIMATED_APY=0.03                   # 3% conservative APY estimate
+```
+
+## 🔒 Security
+
+- **Balance Verification**: Pre-transaction checks
+- **Gas Limit Monitoring**: Prevents excessive fees
+- **Transaction Retry**: 3 attempts with gas price escalation
+- **Collateral Limits**: 3x minimum, 20x maximum
+
+## 📈 Roadmap
+
+### v2.0 Planned
+- **Standard Mode**: Yield streaming via x402 protocol
+- **Smart Mode**: Deadline optimization
+- **x402 Integration**: Trustless automatic yield distribution
+- **Multi-token Support**: USDT, wETH, etc.
+
+## 📄 License
+
+MIT License
+
+## 🙏 Acknowledgments
+
+- **Aave Protocol** for yield farming infrastructure
+- **Base Network** for low-cost L2 execution
+- **OpenClaw Community** for skill development framework
+
+---
+
+**YieldFarmPayment v1.0** — Immediate payments with capital recovery on Base network. 🚀
+
+*Built with ❤️ for the OpenClaw community*

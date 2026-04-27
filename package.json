@@ -1,0 +1,56 @@
+{
+  "name": "yield-farm-payment",
+  "version": "1.0.0",
+  "description": "DeFi Yield Farming Payment System with Flexible Collateral",
+  "main": "scripts/yield-farm-payment.js",
+  "scripts": {
+    "start": "node scripts/cli.js --help",
+    "test": "node scripts/test-realistic-payment.js",
+    "check": "node scripts/check-configuration.js",
+    "calc": "node scripts/collateral-calculator.js --amount 1 --deadline 90",
+    "lint": "eslint scripts/*.js",
+    "format": "prettier --write scripts/*.js"
+  },
+  "keywords": [
+    "defi",
+    "yield-farming",
+    "aave",
+    "base",
+    "payments",
+    "streaming",
+    "collateral",
+    "ethereum",
+    "web3"
+  ],
+  "author": "YieldFarmPayment Team",
+  "license": "MIT",
+  "dependencies": {
+    "viem": "^2.0.0",
+    "dotenv": "^16.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/yield-farm-payment.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/yield-farm-payment/issues"
+  },
+  "homepage": "https://github.com/yourusername/yield-farm-payment#readme",
+  "bin": {
+    "yield-farm-payment": "./scripts/cli.js"
+  },
+  "files": [
+    "scripts/",
+    "references/",
+    "SKILL.md",
+    ".env.example",
+    "package.json"
+  ]
+}
