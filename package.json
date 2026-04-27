@@ -2,6 +2,13 @@
   "name": "yield-farm-payment",
   "version": "1.0.0",
   "description": "DeFi Yield Farming Payment System with Flexible Collateral",
+  "clawhub": {
+    "pricing": {
+      "type": "per-call",
+      "price": 0.20,
+      "currency": "USD"
+    }
+  },
   "main": "scripts/yield-farm-payment.js",
   "scripts": {
     "start": "node scripts/cli.js --help",
