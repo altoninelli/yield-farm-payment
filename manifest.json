@@ -1,12 +1,12 @@
 {
   "name": "YieldFarmPayment",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "description": "DeFi Yield Farming Payment System with Flexible Collateral",
-  "author": "YieldFarmPayment Team",
+  "author": "altoninelli",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/yield-farm-payment.git"
+    "url": "https://github.com/altoninelli/yield-farm-payment.git"
   },
   "keywords": [
     "defi",
@@ -83,7 +83,7 @@
   "tags": ["defi", "payments", "yield", "collateral", "aave", "base"],
   "links": {
     "documentation": "SKILL.md",
-    "github": "https://github.com/yourusername/yield-farm-payment",
-    "issues": "https://github.com/yourusername/yield-farm-payment/issues"
+    "github": "https://github.com/altoninelli/yield-farm-payment",
+    "issues": "https://github.com/altoninelli/yield-farm-payment/issues"
   }
 }

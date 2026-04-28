@@ -21,7 +21,7 @@
       }
     }
   },
-  "main": "scripts/yield-farm-payment.js",
+  "main": "scripts/yield-farm-payment-corrected.js",
   "scripts": {
     "start": "node scripts/cli.js --help",
     "test": "node scripts/test-realistic-payment.js",
