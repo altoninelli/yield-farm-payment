@@ -7,6 +7,16 @@
       "type": "per-call",
       "price": 0.20,
       "currency": "USD"
+    },
+    "env": {
+      "PRIVATE_KEY": {
+        "description": "The private key of the wallet that will execute the payment and Aave deposit.",
+        "required": true
+      },
+      "RPC_URL": {
+        "description": "Your Base Mainnet or Sepolia RPC endpoint URL.",
+        "required": true
+      }
     }
   },
   "main": "scripts/yield-farm-payment.js",
