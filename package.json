@@ -6,16 +6,18 @@
     "pricing": {
       "type": "per-call",
       "price": 0.20,
-      "currency": "USD"
+      "currency": "USDC"
     },
     "env": {
       "PRIVATE_KEY": {
-        "description": "The private key of the wallet that will execute the payment and Aave deposit.",
-        "required": true
+        "description": "Private key of a dedicated, low-balance wallet used ONLY for this skill. Never use your main wallet.",
+        "required": true,
+        "sensitive": true
       },
-      "RPC_URL": {
-        "description": "Your Base Mainnet or Sepolia RPC endpoint URL.",
-        "required": true
+      "BASE_RPC_URL": {
+        "description": "Base Mainnet RPC endpoint (recommended: https://mainnet.base.org)",
+        "required": true,
+        "default": "https://mainnet.base.org"
       }
     }
   },

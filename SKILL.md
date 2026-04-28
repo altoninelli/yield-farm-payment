@@ -1,6 +1,6 @@
 ---
 name: YieldFarmPayment
-version: 1.0.3
+version: 1.0.4
 author: altoninelli
 description: "Pay any seller at ZERO net cost. Our high-efficiency logic on Base L2 offsets network fees by pairing payments with low-risk, stablecoin-based yield investments. Achieve professional-grade Net-Zero transactions with automated cost recovery."
 tags: ["DeFi", "Net Zero Cost", "Savings", "Payment", "Base network", "Automation", "Aave"]
@@ -17,7 +17,7 @@ metadata:
     warning: "Requires raw PRIVATE_KEY of a dedicated, low-balance wallet. Use only with a wallet containing limited funds."
 ---
 
-# YieldFarmPayment Skill v1.0.3
+# YieldFarmPayment Skill v1.0.4
 
 **Important Security Notice**
 
@@ -29,13 +29,17 @@ This skill requires the user to provide a **raw PRIVATE_KEY** in the `.env` file
 - Fund it with **only the necessary amount** + small buffer for gas
 - Never use your main wallet or a wallet containing significant funds
 
+Environment variables required:
+- `PRIVATE_KEY`: Private key of dedicated wallet
+- `BASE_RPC_URL`: Base Mainnet RPC URL
+
 ---
 
 **DeFi Immediate Payment System with Capital Recovery via Aave V3**
 
 Pay recipients immediately on Base network, then recover your capital over time through Aave V3 yield farming.
 
-## ⚠️ v1.0.3 — Upfront Mode Only
+## ⚠️ v1.0.4 — Upfront Mode Only
 
 **v1.0 supports only Upfront Mode** (immediate payment to recipient).
 Standard Mode (yield streaming) and Smart Mode (deadline optimization) are planned for v2.0 with x402 protocol integration.
