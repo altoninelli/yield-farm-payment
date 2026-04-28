@@ -12,7 +12,7 @@ const { calculateOptimalCollateral } = require('./collateral-calculator.js');
 async function runRealisticTests() {
   console.log('💰 YieldFarmPayment v1.0 - Real Base Tests (Upfront Mode Only)\n');
   
-  const recipientAddress = '0x1C7f7c428dE42B8402F8331612131cc8bC126369';
+  const recipientAddress = '0x...';
   
   console.log('📋 Test Configuration:');
   console.log(`   Recipient: ${recipientAddress}`);
@@ -115,13 +115,13 @@ async function runRealisticTests() {
   console.log('\nAfter configuring .env and getting funds:');
   
   console.log('\n# Test 1: Small upfront payment (0.1 USDC, default 20x)');
-  console.log('node scripts/cli.js --amount 0.1 --recipient 0x1C7f7c428dE42B8402F8331612131cc8bC126369 --buffer 8');
+  console.log('node scripts/cli.js --amount 0.1 --recipient 0x... --buffer 8');
   
   console.log('\n# Test 2: Upfront payment with 10x collateral');
-  console.log('node scripts/cli.js --mode upfront --amount 0.1 --recipient 0x1C7f7c428dE42B8402F8331612131cc8bC126369 --collateral 10 --buffer 8');
+  console.log('node scripts/cli.js --mode upfront --amount 0.1 --recipient 0x... --collateral 10 --buffer 8');
   
   console.log('\n# Test 3: Upfront payment with 5x collateral (minimum)');
-  console.log('node scripts/cli.js --mode upfront --amount 0.05 --recipient 0x1C7f7c428dE42B8402F8331612131cc8bC126369 --collateral 5 --buffer 10');
+  console.log('node scripts/cli.js --mode upfront --amount 0.05 --recipient 0x... --collateral 5 --buffer 10');
   
   console.log('\n# Check configuration first');
   console.log('node scripts/check-configuration.js');
