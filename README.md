@@ -94,7 +94,35 @@ node scripts/check-configuration.js
 
 ## 📖 Usage
 
-### Default (20x collateral, ~1 year recovery)
+### 🧪 Recommended Testing Workflow
+1. **Start with simulation (no funds):**
+   ```bash
+   node scripts/test-realistic-payment.js
+   ```
+
+2. **Validate configuration:**
+   ```bash
+   node scripts/check-configuration.js
+   ```
+
+3. **Test on Base Sepolia (testnet) first:**
+   ```bash
+   # Update .env with testnet settings:
+   # BASE_RPC_URL=https://sepolia.base.org
+   # Get test ETH: https://sepolia-faucet.pk910.de/
+   # Get test USDC: https://faucet.circle.com/ (select Base Sepolia)
+   node scripts/cli.js --amount 0.01 --recipient 0x... --collateral 5 --buffer 8
+   ```
+
+4. **Move to Base Mainnet:**
+   ```bash
+   # Update .env with mainnet settings:
+   # BASE_RPC_URL=https://mainnet.base.org
+   # Use REAL funds (start small)
+   node scripts/cli.js --amount 0.1 --recipient 0x... --buffer 8
+   ```
+
+### Default (20x collateral, ~1.6 year recovery)
 ```bash
 node scripts/cli.js --amount 0.1 --recipient 0x... --buffer 8
 ```
@@ -124,7 +152,7 @@ PRIVATE_KEY=0x...                    # Your wallet private key
 BASE_RPC_URL=https://mainnet.base.org  # Base network RPC
 
 # Aave V3 Contracts (Base)
-AAVE_V3_POOL_ADDRESS=0x794a61358D6845594F94dc1DB02A252b5b4814aD
+AAVE_V3_POOL_ADDRESS=0xA238Dd80C259a72e81d7e4664a9801593F98d1c5
 USDC_ADDRESS=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
 AAVE_USDC_TOKEN_ADDRESS=0x4e65fE4DbA92790696d040ac24Aa414708F5c0AB
 
@@ -137,10 +165,19 @@ ESTIMATED_APY=0.03                   # 3% conservative APY estimate
 
 ## 🔒 Security
 
+### ⚠️ CRITICAL SECURITY WARNINGS
+- **NEVER use your main wallet**: Create a dedicated wallet with minimal funds
+- **Verify all contract addresses** against official Aave/Base documentation
+- **Test on Base Sepolia (testnet) first** before using mainnet
+- **Audit all scripts locally** before running with real funds
+- **Monitor transactions** on [basescan.org](https://basescan.org)
+
+### Technical Protections
 - **Balance Verification**: Pre-transaction checks
 - **Gas Limit Monitoring**: Prevents excessive fees
 - **Transaction Retry**: 3 attempts with gas price escalation
 - **Collateral Limits**: 3x minimum, 20x maximum
+- **Health Factor Monitoring**: Minimum 2.0 safety margin
 
 ## 📈 Roadmap
 
