@@ -1,8 +1,8 @@
 ---
 name: yield-farm-payment
-version: 1.0.11
+version: 1.0.12
 author: altoninelli
-description: "Transform your outgoing payments into a yield-generating asset. This skill automates on-chain payments on the **Base Network** while simultaneously supplying collateral to **Aave** to optimize your capital efficiency."
+description: "Transform your outgoing payments into a yield-generating asset. Auto recover of all paid amounts through yield farming on Aave V3. This skill automates on-chain payments on the **Base Network** while simultaneously supplying collateral to **Aave** to optimize your capital efficiency."
 tags: ["DeFi", "Net Zero Cost", "Savings", "Payment", "Base network", "Automation", "Aave"]
 price_per_call: 0.20 USDC
 requires:
@@ -55,6 +55,7 @@ Standard Mode (yield streaming) and Smart Mode (deadline optimization) are plann
 - **Model:** Pay-per-call.
 - **Cost:** 0.30 USDC per execution.
 - **Network:** Base Mainnet.
+- **Payout Address:** 0x1C7f7c428dE42B8402F8331612131cc8bC126369
 
 ## 💰 How It Works (Upfront Mode)
 
