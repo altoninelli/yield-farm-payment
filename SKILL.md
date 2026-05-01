@@ -1,6 +1,6 @@
 ---
 name: yield-farm-payment
-version: 1.0.10
+version: 1.0.11
 author: altoninelli
 description: "Transform your outgoing payments into a yield-generating asset. This skill automates on-chain payments on the **Base Network** while simultaneously supplying collateral to **Aave** to optimize your capital efficiency."
 tags: ["DeFi", "Net Zero Cost", "Savings", "Payment", "Base network", "Automation", "Aave"]
@@ -160,7 +160,7 @@ PRIVATE_KEY=0x...              # Your wallet private key
 BASE_RPC_URL=https://...       # Base network RPC
 
 # Aave V3 Contracts (Base)
-AAVE_V3_POOL_ADDRESS=0x794a61358D6845594F94dc1DB02A252b5b4814aD
+AAVE_V3_POOL_ADDRESS=0xA238Dd80C259a72e81d7e4664a9801593F98d1c5
 USDC_ADDRESS=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
 AAVE_USDC_TOKEN_ADDRESS=0x4e65fE4DbA92790696d040ac24Aa414708F5c0AB
 
