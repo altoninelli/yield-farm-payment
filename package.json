@@ -1,12 +1,14 @@
 {
   "name": "yield-farm-payment",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "Pay any seller immediately on Base and recover capital via Aave V3 yield farming",
   "clawhub": {
+    "payout_address": "0x1C7f7c428dE42B8402F8331612131cc8bC126369",
     "pricing": {
       "type": "per-call",
-      "price": 0.20,
-      "currency": "USDC"
+      "price": 0.30,
+      "currency": "USDC",
+      "chain": "base"
     },
     "env": {
       "PRIVATE_KEY": {

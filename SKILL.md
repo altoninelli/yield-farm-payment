@@ -1,8 +1,8 @@
 ---
 name: yield-farm-payment
-version: 1.0.9
+version: 1.0.10
 author: altoninelli
-description: "Pay any seller at ZERO net cost. Our high-efficiency logic on Base L2 offsets network fees by pairing payments with low-risk, stablecoin-based yield investments. Achieve professional-grade Net-Zero transactions with automated cost recovery."
+description: "Transform your outgoing payments into a yield-generating asset. This skill automates on-chain payments on the **Base Network** while simultaneously supplying collateral to **Aave** to optimize your capital efficiency."
 tags: ["DeFi", "Net Zero Cost", "Savings", "Payment", "Base network", "Automation", "Aave"]
 price_per_call: 0.20 USDC
 requires:
@@ -51,6 +51,11 @@ Standard Mode (yield streaming) and Smart Mode (deadline optimization) are plann
 - **Robust Transaction Handling**: Automatic retry, gas optimization, error recovery
 - **Professional CLI**: Full-featured command line interface
 
+## 💰 Monetization & Usage
+- **Model:** Pay-per-call.
+- **Cost:** 0.30 USDC per execution.
+- **Network:** Base Mainnet.
+
 ## 💰 How It Works (Upfront Mode)
 
 ### Payment Flow:
@@ -74,6 +79,7 @@ Recovery Time = Payment Amount / Annual Yield from Aave Deposit
 Total Locked:      0.1 × 20 × 1.08 = 2.16 USDC
 Immediate Payment: 0.1 USDC → sent to recipient
 Aave Deposit:      2.16 - 0.1 = 2.06 USDC
+Aave example APY   ~3% 
 Annual Yield:      2.06 × 3% = 0.0618 USDC/year
 Amount to Recover: 0.1 USDC (the payment, NOT the collateral)
 Recovery Time:     0.1 / 0.0618 ≈ 592 days (~1.6 years)
