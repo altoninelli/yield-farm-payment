@@ -33,6 +33,9 @@ function checkConfiguration() {
     } else if (value === '0x...' || value === '0x0000000000000000000000000000000000000000') {
       console.log(`❌ ${key}: PLACEHOLDER value`);
       allValid = false;
+    } else if (key === 'PRIVATE_KEY') {
+      // Hide PRIVATE_KEY completely for security
+      console.log(`✅ ${key}: 0x...`);
     } else {
       console.log(`✅ ${key}: ${value.substring(0, 20)}...`);
     }
