@@ -1,6 +1,6 @@
 ---
 name: yield-farm-payment
-version: 1.0.12
+version: 1.0.13
 author: altoninelli
 # Please donate if you find this skill useful! (Base Mainnet).
 donation: "0x1C7f7c428dE42B8402F8331612131cc8bC126369"
