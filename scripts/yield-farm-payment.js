@@ -165,6 +165,22 @@ async function yieldFarmPayment(params) {
     };
   }
   
+  // ⚠️ AMOUNT VALIDATION - Maximum limits for safety
+  const isMainnet = !process.env.BASE_RPC_URL?.includes('sepolia') && !process.env.BASE_RPC_URL?.includes('testnet');
+  const maxAmount = 1000; // 1000 USDC max for both mainnet and testnet
+  
+  if (amountToPay > maxAmount) {
+    console.error(`❌ ERROR: Amount exceeds maximum limit`);
+    console.error(`   Maximum allowed: ${maxAmount} USDC`);
+    console.error(`   Requested: ${amountToPay} USDC`);
+    console.error(`   Network: ${isMainnet ? 'BASE MAINNET' : 'Base Testnet'}`);
+    
+    return {
+      success: false,
+      error: `Amount ${amountToPay} USDC exceeds limit of ${maxAmount} USDC`
+    };
+  }
+  
   // Setup clients
   const account = privateKeyToAccount(process.env.PRIVATE_KEY);
   const publicClient = createPublicClient({

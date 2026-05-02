@@ -126,8 +126,15 @@ node scripts/check-configuration.js
 # Safe simulation testing (no transactions)
 node scripts/test-realistic-payment.js
 
-# Upfront payment with default 20x collateral
-node scripts/cli.js --amount 0.1 --recipient 0x... --buffer 8
+# RECOMMENDED WORKFLOW:
+# Step 1: Test with dry-run first (no on-chain execution)
+node scripts/cli.js --dry-run --amount 0.1 --recipient 0x... --collateral 5 --buffer 8
+
+# Step 2: Execute real transaction with interactive confirmation
+node scripts/cli.js --amount 0.1 --recipient 0x... --collateral 5 --buffer 8
+
+# Advanced: Skip confirmation after thorough review (use with caution)
+node scripts/cli.js --confirm --amount 0.1 --recipient 0x... --collateral 5 --buffer 8
 
 # Custom collateral multiplier
 node scripts/cli.js --mode upfront --amount 0.5 --recipient 0x... --collateral 10 --buffer 5
@@ -182,6 +189,26 @@ ESTIMATED_APY=0.03             # 3% conservative APY estimate
 - **Gas Limit Monitoring**: Prevents excessive fees
 - **Transaction Retry**: 3 attempts with gas price escalation
 - **Nonce Management**: Handles concurrent transactions
+
+### Transaction Confirmation & Prevention of Accidents
+- **Interactive Confirmation Prompt**: Required before sending real transactions
+- **Clear Transaction Preview**: Shows amount, recipient, collateral, and recovery estimates
+- **Amount Limits**: Maximum 1000 USDC on mainnet, 1000 USDC on testnet
+- **Dry-Run Mode**: Test transactions without on-chain execution (`--dry-run` flag)
+- **Dual Confirmation on Mainnet**: Two separate confirmations required for mainnet transactions
+- **Address Validation**: Verifies recipient and wallet addresses before execution
+
+### CLI Safety Flags
+```bash
+# Test with dry-run first (RECOMMENDED)
+node scripts/cli.js --dry-run --amount 0.1 --recipient 0x...
+
+# Real transaction with interactive confirmation (default)
+node scripts/cli.js --amount 0.1 --recipient 0x...
+
+# Skip confirmation only after thorough review (use with caution)
+node scripts/cli.js --confirm --amount 0.1 --recipient 0x...
+```
 
 ### Risk Management
 - **Collateral Buffer**: 5-15% safety margin
