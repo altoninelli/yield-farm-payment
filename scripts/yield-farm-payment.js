@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * YieldFarmPayment - Corrected Version
+ * YieldFarmPayment 
  * v1.0 supports ONLY Upfront Mode (immediate payment + capital recovery)
  * Standard Mode (yield streaming) and Smart Mode (deadline optimization)
  * are planned for v2.0 with x402 protocol integration
@@ -136,7 +136,7 @@ async function executeWithRetry(walletClient, contractConfig, maxRetries = 3) {
 /**
  * Main yield farming payment function with CORRECT mode handling
  */
-async function yieldFarmPaymentCorrected(params) {
+async function yieldFarmPayment(params) {
   const {
     mode = 'standard',
     amountToPay,
@@ -147,7 +147,7 @@ async function yieldFarmPaymentCorrected(params) {
     deadlineDays
   } = params;
   
-  console.log('🌾 YieldFarmPayment - Corrected Version (v1.0 - Upfront Mode Only)\n');
+  console.log('🌾 YieldFarmPayment (v1.0 - Upfront Mode Only)\n');
   
   // ⚠️ v1.0 VALIDATION: ONLY UPFRONT MODE SUPPORTED
   if (mode !== 'upfront') {
@@ -493,14 +493,14 @@ if (require.main === module) {
   }
   
   if (!params.amountToPay || !params.recipientAddress) {
-    console.log('Usage: node yield-farm-payment-corrected.js --mode <mode> --amount <amount> --recipient <address> [--collateral <multiplier>] [--buffer <percentage>] [--deadline <days>]');
+    console.log('Usage: node yield-farm-payment.js --mode <mode> --amount <amount> --recipient <address> [--collateral <multiplier>] [--buffer <percentage>] [--deadline <days>]');
     console.log('Modes: standard, upfront, smart');
     process.exit(1);
   }
   
-  yieldFarmPaymentCorrected(params).then(result => {
+  yieldFarmPayment(params).then(result => {
     if (!result.success) process.exit(1);
   });
 }
 
-module.exports = { yieldFarmPaymentCorrected };
+module.exports = { yieldFarmPayment };

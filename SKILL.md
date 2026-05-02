@@ -1,6 +1,6 @@
 ---
 name: yield-farm-payment
-version: 1.0.13
+version: 1.0.14
 author: altoninelli
 # Please donate if you find this skill useful! (Base Mainnet).
 donation: "0x1C7f7c428dE42B8402F8331612131cc8bC126369"
@@ -142,7 +142,7 @@ yield-farm-payment/
 ├── package.json                # Dependencies
 ├── scripts/
 │   ├── cli.js                  # CLI interface (upfront mode only in v1.0)
-│   ├── yield-farm-payment-corrected.js  # Core payment logic (active)
+│   ├── yield-farm-payment.js   # Core payment logic (active)
 │   ├── transaction-manager.js  # Robust transaction handling
 │   ├── collateral-calculator.js # Collateral optimization
 │   ├── check-configuration.js  # Config validation

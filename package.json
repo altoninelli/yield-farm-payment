@@ -1,6 +1,6 @@
 {
   "name": "yield-farm-payment",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Pay any seller immediately on Base and recover capital via Aave V3 yield farming",
   "clawhub": {
     "payout_address": "0x1C7f7c428dE42B8402F8331612131cc8bC126369",
@@ -23,7 +23,7 @@
       }
     }
   },
-  "main": "scripts/yield-farm-payment-corrected.js",
+  "main": "scripts/yield-farm-payment.js",
   "scripts": {
     "start": "node scripts/cli.js --help",
     "test": "node scripts/test-realistic-payment.js",

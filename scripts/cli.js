@@ -5,7 +5,7 @@
  * Uses the robust transaction manager with retry logic
  */
 
-const { yieldFarmPaymentCorrected } = require('./yield-farm-payment-corrected.js');
+const { yieldFarmPayment } = require('./yield-farm-payment.js');
 require('dotenv').config({ path: require('path').join(__dirname, '..', '.env') });
 
 function parseArgs() {
@@ -112,7 +112,7 @@ async function main() {
   
   console.log('🚀 Starting YieldFarmPayment with robust transaction handling...\n');
   
-  const result = await yieldFarmPaymentCorrected({
+  const result = await yieldFarmPayment({
     mode: params.mode,
     amountToPay: params.amount,
     recipientAddress: params.recipient,

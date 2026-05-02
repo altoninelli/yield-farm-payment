@@ -6,7 +6,7 @@
  * v1.0 ONLY supports Upfront Mode - Standard and Smart modes are v2.0
  */
 
-const { yieldFarmPaymentCorrected } = require('./yield-farm-payment-corrected.js');
+const { yieldFarmPayment } = require('./yield-farm-payment.js');
 const { calculateOptimalCollateral } = require('./collateral-calculator.js');
 
 async function runRealisticTests() {
