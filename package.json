@@ -5,8 +5,8 @@
   "clawhub": {
     "payout_address": "0x1C7f7c428dE42B8402F8331612131cc8bC126369",
     "pricing": {
-      "type": "per-call",
-      "price": 0.30,
+      "type": "free donation",
+      "price": 0,
       "currency": "USDC",
       "chain": "base"
     },

@@ -2,9 +2,11 @@
 name: yield-farm-payment
 version: 1.0.12
 author: altoninelli
-description: "Transform your outgoing payments into a yield-generating asset. Auto recover of all paid amounts through yield farming on Aave V3. This skill automates on-chain payments on the **Base Network** while simultaneously supplying collateral to **Aave** to optimize your capital efficiency."
+# Please donate if you find this skill useful! (Base Mainnet).
+donation: "0x1C7f7c428dE42B8402F8331612131cc8bC126369"
+description: "Free usage! Transform your outgoing payments into a yield-generating asset. Auto recover of all paid amounts through yield farming on Aave V3. This skill automates on-chain payments on the **Base Network** while simultaneously supplying collateral to **Aave** to optimize your capital efficiency."
 tags: ["DeFi", "Net Zero Cost", "Savings", "Payment", "Base network", "Automation", "Aave"]
-price_per_call: 0.20 USDC
+price_per_call: 0 USDC
 requires:
   - viem
 metadata:
@@ -52,10 +54,11 @@ Standard Mode (yield streaming) and Smart Mode (deadline optimization) are plann
 - **Professional CLI**: Full-featured command line interface
 
 ## 💰 Monetization & Usage
-- **Model:** Pay-per-call.
-- **Cost:** 0.30 USDC per execution.
+- **Model:** Free.
+- **Cost:** 0 USDC per execution.
+- **Donations welcome!** Please donate if you use this skill. Support development by donating to: 0x1C7f7c428dE42B8402F8331612131cc8bC126369 (Base Mainnet).
+- **Donations Address:** 0x1C7f7c428dE42B8402F8331612131cc8bC126369
 - **Network:** Base Mainnet.
-- **Payout Address:** 0x1C7f7c428dE42B8402F8331612131cc8bC126369
 
 ## 💰 How It Works (Upfront Mode)
 
@@ -166,7 +169,7 @@ USDC_ADDRESS=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
 AAVE_USDC_TOKEN_ADDRESS=0x4e65fE4DbA92790696d040ac24Aa414708F5c0AB
 
 # Settings
-SKILL_FEE_USDC=0.20            # Fee per skill call
+SKILL_FEE_USDC=0               # Fee per skill call
 DEFAULT_COLLATERAL_MULTIPLIER=20  # 20x default for ~1.6 year recovery
 DEFAULT_BUFFER_PERCENTAGE=8
 ESTIMATED_APY=0.03             # 3% conservative APY estimate

@@ -90,7 +90,7 @@ NOTES:
   • v1.0 ONLY supports 'upfront' mode (immediate payment)
   • Minimum collateral multiplier: ${process.env.MIN_COLLATERAL_MULTIPLIER || 3}x
   • Maximum collateral multiplier: ${process.env.MAX_COLLATERAL_MULTIPLIER || 20}x
-  • Skill fee: ${process.env.SKILL_FEE_USDC || 0.01} USDC
+  • Skill fee: ${process.env.SKILL_FEE_USDC || 0.2} USDC
   • Network: ${process.env.BASE_RPC_URL?.includes('sepolia') ? 'Base Sepolia Testnet' : 'Base Mainnet'}
   `);
 }

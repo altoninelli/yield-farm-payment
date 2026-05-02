@@ -157,7 +157,7 @@ USDC_ADDRESS=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
 AAVE_USDC_TOKEN_ADDRESS=0x4e65fE4DbA92790696d040ac24Aa414708F5c0AB
 
 # Settings
-SKILL_FEE_USDC=0.20                  # Fee per skill call
+SKILL_FEE_USDC=0                     # No Fee per skill call
 DEFAULT_COLLATERAL_MULTIPLIER=20     # 20x for ~1.6 year recovery
 DEFAULT_BUFFER_PERCENTAGE=8          # 8% safety buffer
 ESTIMATED_APY=0.03                   # 3% conservative APY estimate
