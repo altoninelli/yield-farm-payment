@@ -1,21 +1,15 @@
 {
   "name": "yield-farm-payment",
-  "version": "1.0.14",
-  "description": "Pay any seller immediately on Base and recover capital via Aave V3 yield farming",
+  "version": "1.2.0",
+  "description": "AgentPay-first payment automation on Base with Aave recovery. No PRIVATE_KEY required in .env; batch transaction preparation for external wallet signing.",
   "clawhub": {
-    "payout_address": "0x1C7f7c428dE42B8402F8331612131cc8bC126369",
     "pricing": {
-      "type": "free donation",
-      "price": 0,
+      "type": "paid",
+      "price": 0.2,
       "currency": "USDC",
       "chain": "base"
     },
     "env": {
-      "PRIVATE_KEY": {
-        "description": "Private key of a dedicated, low-balance wallet used ONLY for this skill. Never use your main wallet.",
-        "required": true,
-        "sensitive": true
-      },
       "BASE_RPC_URL": {
         "description": "Base Mainnet RPC endpoint",
         "required": true,

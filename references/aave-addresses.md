@@ -1,6 +1,6 @@
 # Aave V3 Addresses - Base Network
 
-## Main Contracts (YieldFarmPayment v1.0)
+## Main Contracts (YieldFarmPayment)
 
 ### Aave V3 Pool
 - **Address**: `0xA238Dd80C259a72e81d7e4664a9801593F98d1c5`

@@ -2,13 +2,11 @@
 
 /**
  * YieldFarmPayment 
- * v1.0 supports ONLY Upfront Mode (immediate payment + capital recovery)
- * Standard Mode (yield streaming) and Smart Mode (deadline optimization)
- * are planned for v2.0 with x402 protocol integration
+ * v1.2 supports ONLY AgentPay Mode (batch transaction preparation for external signing)
+ * AgentPay Mode: Prepare batch transaction for external signing
  */
 
-const { createWalletClient, createPublicClient, http, formatUnits, parseUnits, parseGwei } = require('viem');
-const { privateKeyToAccount } = require('viem/accounts');
+const { createPublicClient, http, formatUnits, parseUnits } = require('viem');
 const { base } = require('viem/chains');
 
 // Load .env
@@ -134,34 +132,26 @@ async function executeWithRetry(walletClient, contractConfig, maxRetries = 3) {
 }
 
 /**
- * Main yield farming payment function with CORRECT mode handling
+ * Main yield farming payment function - AgentPay Mode Only
  */
 async function yieldFarmPayment(params) {
   const {
-    mode = 'standard',
     amountToPay,
     recipientAddress,
     token = 'USDC',
     collateralMultiplier = 10,
     bufferPercentage = 8,
-    deadlineDays
+    userWalletAddress // Required for agent-pay mode
   } = params;
   
-  console.log('🌾 YieldFarmPayment (v1.0 - Upfront Mode Only)\n');
+  console.log('🌾 YieldFarmPayment (v1.2 - AgentPay Mode Only)\n');
   
-  // ⚠️ v1.0 VALIDATION: ONLY UPFRONT MODE SUPPORTED
-  if (mode !== 'upfront') {
-    console.error(`❌ v1.0 ERROR: Mode '${mode}' not supported in v1.0`);
-    console.error('   v1.0 ONLY supports "upfront" mode (immediate payment + capital recovery)');
-    console.error('   Standard Mode (yield streaming via x402) and Smart Mode (deadline optimization)');
-    console.error('   are planned for v2.0 with x402 protocol integration');
-    console.error('');
-    console.error('   Please use: --mode upfront');
-    console.error('   Example: node scripts/cli.js --mode upfront --amount 0.1 --recipient 0x...');
-    
+  // Validate userWalletAddress is provided
+  if (!userWalletAddress) {
+    console.error(`❌ ERROR: userWalletAddress is required for AgentPay mode`);
     return {
       success: false,
-      error: `Mode '${mode}' not supported in v1.0. Use 'upfront' mode only.`
+      error: 'userWalletAddress is required for AgentPay mode'
     };
   }
   
@@ -181,21 +171,18 @@ async function yieldFarmPayment(params) {
     };
   }
   
-  // Setup clients
-  const account = privateKeyToAccount(process.env.PRIVATE_KEY);
+  // Setup clients - only public client needed for AgentPay
   const publicClient = createPublicClient({
     chain: base,
     transport: http(process.env.BASE_RPC_URL)
   });
   
-  const walletClient = createWalletClient({
-    account,
-    chain: base,
-    transport: http(process.env.BASE_RPC_URL)
-  });
+  // Token configuration
+  const tokenAddress = process.env.USDC_ADDRESS;
+  const decimals = 6; // USDC
   
-  console.log(`👤 Account: ${account.address}`);
-  console.log(`📋 Mode: ${mode} (v1.0 Upfront Mode Only), Amount: ${amountToPay} ${token}, Recipient: ${recipientAddress.substring(0, 12)}...`);
+  console.log(`👤 Wallet: ${userWalletAddress}`);
+  console.log(`📋 Mode: AgentPay, Amount: ${amountToPay} ${token}, Recipient: ${recipientAddress.substring(0, 12)}...`);
   
   try {
     // 1. Calculate amounts
@@ -207,55 +194,13 @@ async function yieldFarmPayment(params) {
     
     console.log(`📊 Collateral: ${formatUnits(totalLockedWei, decimals)} ${token} (${collateralMultiplier}x + ${bufferPercentage}%)`);
     
-    // 2. Check balance
-    const tokenAddress = process.env.USDC_ADDRESS;
-    const balance = await publicClient.readContract({
-      address: tokenAddress,
-      abi: ERC20_ABI,
-      functionName: 'balanceOf',
-      args: [account.address]
-    });
-    
-    if (balance < totalLockedWei) {
-      throw new Error(`Insufficient balance: ${formatUnits(balance, decimals)} available, ${formatUnits(totalLockedWei, decimals)} required`);
-    }
-    
-    console.log(`✅ Balance: ${formatUnits(balance, decimals)} ${token} available`);
-    
-    // 3. Execute based on mode
-    let result;
-    
-    switch (mode) {
-      case 'standard':
-        result = await executeStandardMode(
-          walletClient, publicClient, account,
-          tokenAddress, decimals, token,
-          totalLockedWei, amountToPayWei,
-          recipientAddress
-        );
-        break;
-        
-      case 'upfront':
-        result = await executeUpfrontMode(
-          walletClient, publicClient, account,
-          tokenAddress, decimals, token,
-          totalLockedWei, amountToPayWei,
-          recipientAddress, collateralMultiplier, bufferPercentage
-        );
-        break;
-        
-      case 'smart':
-        result = await executeSmartMode(
-          walletClient, publicClient, account,
-          tokenAddress, decimals, token,
-          amountToPayWei, recipientAddress,
-          deadlineDays, bufferPercentage
-        );
-        break;
-        
-      default:
-        throw new Error(`Unknown mode: ${mode}. Use 'standard', 'upfront', or 'smart'`);
-    }
+    // 2. Prepare AgentPay batch
+    const result = await prepareAgentPayBatch(
+      publicClient, userWalletAddress,
+      tokenAddress, decimals, token,
+      totalLockedWei, amountToPayWei,
+      recipientAddress, collateralMultiplier, bufferPercentage
+    );
     
     return result;
     
@@ -269,254 +214,118 @@ async function yieldFarmPayment(params) {
 }
 
 /**
- * Standard Mode: Yield streaming
+ * AgentPay Mode: Prepare batch transaction for external signing
  */
-async function executeStandardMode(walletClient, publicClient, account,
-  tokenAddress, decimals, token,
-  totalLockedWei, amountToPayWei,
-  recipientAddress) {
-  
-  console.log('\n🏦 Executing Standard Mode (Yield Stream)');
-  
-  // 1. APPROVE Aave
-  console.log(`✅ Approving Aave to spend ${formatUnits(totalLockedWei, decimals)} ${token}...`);
-  
-  const approveResult = await executeWithRetry(walletClient, {
-    address: tokenAddress,
-    abi: ERC20_ABI,
-    functionName: 'approve',
-    args: [process.env.AAVE_V3_POOL_ADDRESS, totalLockedWei],
-    account,
-    maxPriorityFeePerGas: parseGwei('0.05'),
-    maxFeePerGas: parseGwei('0.1')
-  });
-  
-  if (!approveResult.success) {
-    throw new Error(`Approval failed: ${approveResult.error.message}`);
-  }
-  
-  // 2. Wait for approval confirmation
-  console.log(`⏳ Waiting for approval confirmation...`);
-  await new Promise(resolve => setTimeout(resolve, 5000));
-  
-  // 3. SUPPLY to Aave
-  console.log(`✅ Supplying to Aave V3...`);
-  
-  const supplyResult = await executeWithRetry(walletClient, {
-    address: process.env.AAVE_V3_POOL_ADDRESS,
-    abi: AAVE_POOL_ABI,
-    functionName: 'supply',
-    args: [tokenAddress, totalLockedWei, account.address, 0],
-    account,
-    maxPriorityFeePerGas: parseGwei('0.05'),
-    maxFeePerGas: parseGwei('0.1')
-  });
-  
-  if (!supplyResult.success) {
-    throw new Error(`Supply failed: ${supplyResult.error.message}`);
-  }
-  
-  // 4. Calculate yield metrics
-  const apy = parseFloat(process.env.ESTIMATED_APY) || 0.05;
-  const annualYieldWei = totalLockedWei * BigInt(Math.floor(apy * 100)) / 100n;
-  const dailyYieldWei = annualYieldWei / 365n;
-  const paymentDurationDays = Math.ceil(Number(amountToPayWei) / Number(dailyYieldWei));
-  
-  console.log(`\n🎉 STANDARD MODE SUCCESSFUL!`);
-  console.log(`📊 Transaction: ${supplyResult.hash}`);
-  console.log(`🔄 Daily yield: ${formatUnits(dailyYieldWei, decimals)} ${token}`);
-  console.log(`⏰ Estimated payment time: ${paymentDurationDays} days`);
-  console.log(`👤 Yield will stream to: ${recipientAddress.substring(0, 12)}...`);
-  
-  return {
-    success: true,
-    transactionHash: supplyResult.hash,
-    dailyYield: formatUnits(dailyYieldWei, decimals),
-    paymentDurationDays,
-    mode: 'standard'
-  };
-}
-
-/**
- * Upfront Mode: Immediate payment + collateral recovery
- */
-async function executeUpfrontMode(walletClient, publicClient, account,
+async function prepareAgentPayBatch(publicClient, userWalletAddress,
   tokenAddress, decimals, token,
   totalLockedWei, amountToPayWei,
   recipientAddress, collateralMultiplier, bufferPercentage) {
   
-  console.log('\n💰 Executing Upfront Mode (Immediate Payment)');
+  console.log('\n🤖 Preparing AgentPay Batch Transaction');
   
-  // 1. TRANSFER payment to recipient immediately
-  console.log(`✅ Transferring ${formatUnits(amountToPayWei, decimals)} ${token} to recipient...`);
+  // Calculate fee (0.2 USDC fixed for now)
+  const feeAmount = parseUnits('0.2', decimals);
+  const totalAmountNeeded = totalLockedWei + feeAmount;
   
-  const transferResult = await executeWithRetry(walletClient, {
-    address: tokenAddress,
-    abi: ERC20_ABI,
+  console.log(`💰 Fee: ${formatUnits(feeAmount, decimals)} USDC`);
+  console.log(`📦 Total batch amount: ${formatUnits(totalAmountNeeded, decimals)} USDC`);
+  
+  // Prepare batch transactions
+  const batchTransactions = [];
+  
+  // Transaction 1: Pay fee to developer
+  const developerAddress = '0x1C7f7c428dE42B8402F8331612131cc8bC126369';
+  batchTransactions.push({
+    type: 'erc20-transfer',
+    description: `Pay ${formatUnits(feeAmount, decimals)} USDC fee to developer`,
+    contractAddress: tokenAddress,
     functionName: 'transfer',
-    args: [recipientAddress, amountToPayWei],
-    account,
-    maxPriorityFeePerGas: parseGwei('0.05'),
-    maxFeePerGas: parseGwei('0.1')
+    args: [developerAddress, feeAmount],
+    value: 0n
   });
   
-  if (!transferResult.success) {
-    throw new Error(`Transfer failed: ${transferResult.error.message}`);
-  }
+  // Transaction 2: Pay amount to recipient
+  batchTransactions.push({
+    type: 'erc20-transfer',
+    description: `Pay ${formatUnits(amountToPayWei, decimals)} USDC to recipient`,
+    contractAddress: tokenAddress,
+    functionName: 'transfer',
+    args: [recipientAddress, amountToPayWei],
+    value: 0n
+  });
   
-  console.log(`✅ Payment sent! Transaction: ${transferResult.hash}`);
+  // Transaction 3: Approve Aave pool to spend collateral
+  const collateralAmount = totalLockedWei - amountToPayWei;
+  const aavePoolAddress = process.env.AAVE_V3_POOL_ADDRESS;
+  batchTransactions.push({
+    type: 'erc20-approve',
+    description: `Approve Aave pool to spend ${formatUnits(collateralAmount, decimals)} USDC`,
+    contractAddress: tokenAddress,
+    functionName: 'approve',
+    args: [aavePoolAddress, collateralAmount],
+    value: 0n
+  });
   
-  // 2. Calculate remaining collateral for recovery
-  const remainingCollateralWei = totalLockedWei - amountToPayWei;
+  // Transaction 4: Supply collateral to Aave
+  batchTransactions.push({
+    type: 'aave-supply',
+    description: `Supply ${formatUnits(collateralAmount, decimals)} USDC to Aave V3`,
+    contractAddress: aavePoolAddress,
+    functionName: 'supply',
+    args: [tokenAddress, collateralAmount, userWalletAddress, 0],
+    value: 0n
+  });
   
-  if (remainingCollateralWei > 0) {
-    console.log(`✅ Locking ${formatUnits(remainingCollateralWei, decimals)} ${token} in Aave for recovery...`);
-    
-    // 2a. APPROVE Aave for remaining collateral
-    const approveResult = await executeWithRetry(walletClient, {
-      address: tokenAddress,
-      abi: ERC20_ABI,
-      functionName: 'approve',
-      args: [process.env.AAVE_V3_POOL_ADDRESS, remainingCollateralWei],
-      account,
-      maxPriorityFeePerGas: parseGwei('0.05'),
-      maxFeePerGas: parseGwei('0.1')
-    });
-    
-    if (!approveResult.success) {
-      console.log(`⚠️ Approval for recovery collateral failed: ${approveResult.error.message}`);
-      console.log(`   (Payment was still sent to recipient)`);
-    } else {
-      // 2b. SUPPLY remaining to Aave
-      await new Promise(resolve => setTimeout(resolve, 3000));
+  // Simulate the batch to check for errors
+  console.log('\n🔍 Simulating batch transactions...');
+  try {
+    for (let i = 0; i < batchTransactions.length; i++) {
+      const tx = batchTransactions[i];
+      console.log(`   ${i + 1}. ${tx.description}`);
       
-      const supplyResult = await executeWithRetry(walletClient, {
-        address: process.env.AAVE_V3_POOL_ADDRESS,
-        abi: AAVE_POOL_ABI,
-        functionName: 'supply',
-        args: [tokenAddress, remainingCollateralWei, account.address, 0],
-        account,
-        maxPriorityFeePerGas: parseGwei('0.05'),
-        maxFeePerGas: parseGwei('0.1')
+      // Simulate each transaction
+      await publicClient.simulateContract({
+        address: tx.contractAddress,
+        abi: tx.contractAddress === tokenAddress ? ERC20_ABI : AAVE_POOL_ABI,
+        functionName: tx.functionName,
+        args: tx.args,
+        account: userWalletAddress
       });
-      
-      if (supplyResult.success) {
-        console.log(`✅ Recovery collateral locked in Aave: ${supplyResult.hash}`);
-      }
     }
+    console.log('✅ Batch simulation successful');
+  } catch (error) {
+    console.error(`❌ Batch simulation failed: ${error.message}`);
+    throw error;
   }
   
-  // 3. Calculate recovery metrics
-  const apy = parseFloat(process.env.ESTIMATED_APY) || 0.05;
-  const annualYieldWei = remainingCollateralWei * BigInt(Math.floor(apy * 100)) / 100n;
-  const dailyYieldWei = annualYieldWei / 365n;
-  // Recovery = recuperare il PAYMENT (amount inviato al seller), NON il collateral totale
-  const recoveryDays = dailyYieldWei > 0n ? 
-    Math.ceil(Number(amountToPayWei) / Number(dailyYieldWei)) : 0;
+  // Calculate recovery metrics
+  const apy = parseFloat(process.env.ESTIMATED_APY) || 0.03;
+  const annualYield = Number(formatUnits(collateralAmount, decimals)) * apy;
+  const dailyYield = annualYield / 365;
+  const recoveryDays = Number(formatUnits(amountToPayWei, decimals)) / dailyYield;
   
-  console.log(`\n🎉 UPFRONT MODE SUCCESSFUL!`);
-  console.log(`📊 Payment transaction: ${transferResult.hash}`);
-  console.log(`💰 Immediate payment: ${formatUnits(amountToPayWei, decimals)} ${token}`);
-  console.log(`🏦 Recovery collateral: ${formatUnits(remainingCollateralWei, decimals)} ${token}`);
-  console.log(`🔄 Daily recovery yield: ${formatUnits(dailyYieldWei, decimals)} ${token}`);
-  console.log(`⏰ Estimated recovery time: ${recoveryDays} days`);
+  console.log('\n📋 AgentPay Batch Ready for Signing:');
+  console.log('═'.repeat(80));
+  batchTransactions.forEach((tx, index) => {
+    console.log(`${index + 1}. ${tx.description}`);
+  });
+  console.log('═'.repeat(80));
+  console.log(`\n💰 Recovery Estimate: ~${Math.ceil(recoveryDays)} days at ${apy * 100}% APY`);
+  console.log(`\n🔑 Sign these transactions in your wallet to complete the payment.`);
   
   return {
     success: true,
-    transactionHash: transferResult.hash,
-    immediatePayment: formatUnits(amountToPayWei, decimals),
-    recoveryCollateral: formatUnits(remainingCollateralWei, decimals),
-    recoveryDays,
-    mode: 'upfront'
+    mode: 'agent-pay',
+    batchTransactions,
+    summary: {
+      feeAmount: formatUnits(feeAmount, decimals),
+      paymentAmount: formatUnits(amountToPayWei, decimals),
+      collateralAmount: formatUnits(collateralAmount, decimals),
+      totalAmount: formatUnits(totalAmountNeeded, decimals),
+      estimatedRecoveryDays: Math.ceil(recoveryDays),
+      apy: apy
+    }
   };
-}
-
-/**
- * Smart Mode: Deadline optimization (falls back to standard)
- */
-async function executeSmartMode(walletClient, publicClient, account,
-  tokenAddress, decimals, token,
-  amountToPayWei, recipientAddress,
-  deadlineDays, bufferPercentage) {
-  
-  console.log('\n🧠 Executing Smart Mode (Deadline Optimization)');
-  
-  if (!deadlineDays || deadlineDays <= 0) {
-    throw new Error('Smart mode requires a positive deadline in days');
-  }
-  
-  // Calculate required collateral for deadline
-  const apy = parseFloat(process.env.ESTIMATED_APY) || 0.05;
-  const requiredDailyYield = amountToPayWei / BigInt(deadlineDays);
-  const requiredAnnualYield = requiredDailyYield * 365n;
-  const requiredCollateralWei = requiredAnnualYield * 100n / BigInt(Math.floor(apy * 100));
-  const bufferWei = requiredCollateralWei * BigInt(bufferPercentage) / 100n;
-  const totalRequiredWei = requiredCollateralWei + bufferWei;
-  
-  const requiredMultiplier = Number(totalRequiredWei) / Number(amountToPayWei);
-  const maxMultiplier = parseFloat(process.env.MAX_COLLATERAL_MULTIPLIER) || 20;
-  
-  console.log(`📊 Smart calculation:`);
-  console.log(`   Payment: ${formatUnits(amountToPayWei, decimals)} ${token}`);
-  console.log(`   Deadline: ${deadlineDays} days`);
-  console.log(`   Required multiplier: ${requiredMultiplier.toFixed(1)}x`);
-  console.log(`   Available multiplier: ${maxMultiplier}x`);
-  
-  if (requiredMultiplier <= maxMultiplier) {
-    console.log(`✅ Deadline achievable with ${requiredMultiplier.toFixed(1)}x collateral`);
-    
-    // Use calculated collateral
-    return await executeStandardMode(
-      walletClient, publicClient, account,
-      tokenAddress, decimals, token,
-      totalRequiredWei, amountToPayWei,
-      recipientAddress
-    );
-    
-  } else {
-    console.log(`⚠️ Deadline not achievable with available collateral`);
-    console.log(`   Falling back to maximum available collateral (${maxMultiplier}x)...`);
-    
-    // Fall back to maximum available
-    const maxCollateralWei = amountToPayWei * BigInt(Math.floor(maxMultiplier * 100)) / 100n;
-    const maxBufferWei = maxCollateralWei * BigInt(bufferPercentage) / 100n;
-    const maxTotalWei = maxCollateralWei + maxBufferWei;
-    
-    console.log(`   Using maximum: ${formatUnits(maxTotalWei, decimals)} ${token}`);
-    console.log(`   New payment time: ~${Math.ceil(Number(amountToPayWei) / (Number(maxTotalWei) * apy / 365))} days`);
-    
-    return await executeStandardMode(
-      walletClient, publicClient, account,
-      tokenAddress, decimals, token,
-      maxTotalWei, amountToPayWei,
-      recipientAddress
-    );
-  }
-}
-
-// Export for CLI
-if (require.main === module) {
-  const args = process.argv.slice(2);
-  const params = {};
-  
-  for (let i = 0; i < args.length; i++) {
-    if (args[i] === '--mode' || args[i] === '-m') params.mode = args[++i];
-    else if (args[i] === '--amount' || args[i] === '-a') params.amountToPay = parseFloat(args[++i]);
-    else if (args[i] === '--recipient' || args[i] === '-r') params.recipientAddress = args[++i];
-    else if (args[i] === '--collateral' || args[i] === '-c') params.collateralMultiplier = parseFloat(args[++i]);
-    else if (args[i] === '--buffer' || args[i] === '-b') params.bufferPercentage = parseFloat(args[++i]);
-    else if (args[i] === '--deadline' || args[i] === '-d') params.deadlineDays = parseInt(args[++i]);
-  }
-  
-  if (!params.amountToPay || !params.recipientAddress) {
-    console.log('Usage: node yield-farm-payment.js --mode <mode> --amount <amount> --recipient <address> [--collateral <multiplier>] [--buffer <percentage>] [--deadline <days>]');
-    console.log('Modes: standard, upfront, smart');
-    process.exit(1);
-  }
-  
-  yieldFarmPayment(params).then(result => {
-    if (!result.success) process.exit(1);
-  });
 }
 
 module.exports = { yieldFarmPayment };
