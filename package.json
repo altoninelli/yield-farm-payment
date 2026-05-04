@@ -1,7 +1,7 @@
 {
   "name": "yield-farm-payment",
-  "version": "1.2.0",
-  "description": "AgentPay-first payment automation on Base with Aave recovery. No PRIVATE_KEY required in .env; batch transaction preparation for external wallet signing.",
+  "version": "2.0.0",
+  "description": "Modern payment automation on Base with WalletConnect v2.0 + HTML fallback. Connect wallet via QR code or browser UI. 0.2 USDC developer fee built-in.",
   "clawhub": {
     "pricing": {
       "type": "paid",
@@ -10,6 +10,10 @@
       "chain": "base"
     },
     "env": {
+      "WALLETCONNECT_PROJECT_ID": {
+        "description": "WalletConnect v2.0 Project ID (free from cloud.walletconnect.com)",
+        "required": true
+      },
       "BASE_RPC_URL": {
         "description": "Base Mainnet RPC endpoint",
         "required": true,
@@ -17,9 +21,11 @@
       }
     }
   },
-  "main": "scripts/yield-farm-payment.js",
+  "main": "scripts/yield-farm-payment-wc2.js",
   "scripts": {
-    "start": "node scripts/cli.js --help",
+    "start": "node scripts/cli-wc2.js --help",
+    "wc": "node scripts/cli-wc2.js",
+    "html": "node scripts/cli-final.js",
     "test": "node scripts/test-realistic-payment.js",
     "check": "node scripts/check-configuration.js",
     "calc": "node scripts/collateral-calculator.js --amount 1 --deadline 90"
@@ -37,8 +43,10 @@
   "author": "altoninelli",
   "license": "MIT",
   "dependencies": {
-    "viem": "^2.0.0",
-    "dotenv": "^16.0.0"
+    "@walletconnect/universal-provider": "^2.23.7",
+    "dotenv": "^16.0.0",
+    "qrcode-terminal": "^0.12.0",
+    "viem": "^2.0.0"
   },
   "devDependencies": {
     "eslint": "^8.0.0",
@@ -56,6 +64,7 @@
   },
   "homepage": "https://github.com/altoninelli/yield-farm-payment#readme",
   "bin": {
-    "yield-farm-payment": "./scripts/cli.js"
+    "yield-farm-payment": "./scripts/cli-wc2.js",
+    "yield-farm-payment-html": "./scripts/cli-final.js"
   }
 }

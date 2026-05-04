@@ -1,9 +1,9 @@
 ---
 name: yield-farm-payment
-version: 1.2.0
+version: 2.0.0
 author: altoninelli
-description: "Agent-friendly payment automation! Transform your outgoing payments into a yield-generating asset. Auto recover of all paid amounts through yield farming on Aave V3. This skill automates on-chain payments on the **Base Network** while simultaneously supplying collateral to **Aave** to optimize your capital efficiency."
-tags: ["DeFi", "Net Zero Cost", "Savings", "Payment", "Base network", "Automation", "Aave", "AgentPay"]
+description: "Modern payment automation with WalletConnect v2.0! Connect your wallet via QR code or browser UI. Pay recipients immediately while earning yield on Aave V3. Automatic capital recovery through yield farming. Supports WalletConnect, HTML fallback, and manual modes."
+tags: ["DeFi", "Payments", "WalletConnect", "Aave", "Base", "QR Code", "Yield Farming", "Web3", "Automation"]
 price_per_call: 0.2 USDC
 requires:
   - viem
@@ -11,231 +11,185 @@ metadata:
   openclaw:
     emoji: "🌾"
     category: "DeFi Payments"
-    reputation_required: "medium"
-    security_level: "high-privilege"
-    warning: "AgentPay mode requires external wallet signing. Use dedicated wallets with limited funds."
+    reputation_required: "low"
+    security_level: "user-wallet"
+    warning: "User signs transactions in their own wallet via WalletConnect. No private keys stored."
 ---
 
-# YieldFarmPayment Skill v1.2
+# YieldFarmPayment Skill v2.0 🚀
 
-**Important Security Notice**
+**Modern wallet connection with WalletConnect v2.0 + HTML fallback**
 
-This skill supports **AgentPay Mode Only** (batch preparation for external wallet signing).
+Connect your wallet via QR code in terminal or browser UI. Pay recipients on Base network while automatically recovering capital through Aave V3 yield farming.
 
-**Strongly recommended:**
-- Use a **dedicated wallet** created only for this skill
-- Fund it with **only the necessary amount** + small buffer for gas
-- Never use your main wallet or a wallet containing significant funds
-- Review batch transactions before signing in your wallet
+## ✨ What's New in v2.0
 
-Environment variables required:
-- `BASE_RPC_URL`: Base Mainnet RPC URL
-- No `PRIVATE_KEY` required (external signing only)
-
----
-
-**DeFi Immediate Payment System with Capital Recovery via Aave V3**
-
-Pay recipients immediately on Base network, then recover your capital over time through Aave V3 yield farming.
-
-## ⚠️ v1.2 — AgentPay Mode Only
-
-**v1.2 supports only AgentPay Mode** (batch preparation for external wallet signing).
-Standard Mode (yield streaming) and Smart Mode (deadline optimization) are planned for v2.0 with x402 protocol integration.
+- **WalletConnect v2.0** - Scan QR code with any mobile wallet
+- **HTML Fallback** - Browser-based UI for desktop users  
+- **3 Execution Modes** - Choose your preferred workflow
+- **No Private Keys** - User signs in their own wallet
+- **Modern UX** - QR code + Web3Modal integration
 
 ## 🎯 Features
 
-- **AgentPay Mode Only**: Batch transaction preparation for external wallet signing, no `PRIVATE_KEY` needed in `.env`
-- **Fee Built In**: 0.2 USDC fee included in the prepared batch
-- **Flexible Collateral**: 3x to 20x multiplier with configurable buffer (default: 20x)
-- **Aave V3 Integration**: Deposit collateral to earn yield on Base network
-- **Batch Transaction Flow**: developer fee + seller payment + Aave collateral deposit
-- **Professional CLI**: Full-featured command line interface for simulation and batch preparation
+- **WalletConnect v2.0** - Industry-standard wallet connection
+- **HTML Fallback** - Browser UI with Web3Modal
+- **Manual Mode** - JSON export for Revoke.cash
+- **0.2 USDC Fee** - Built-in developer fee (visible before signing)
+- **Aave V3 Integration** - Deposit collateral to earn yield
+- **Base Network** - Low fees, fast transactions
+- **Dry-run Mode** - Test calculations without executing
+- **Flexible Collateral** - 3x to 20x multiplier with buffer
 
-## 💰 Monetization & Usage
-- **Model:** Paid service via AgentPay
-- **Cost:** 0.2 USDC per AgentPay transaction (built into the batch)
-- **Network:** Base Mainnet
+## 💰 Monetization
 
-## 💰 How It Works (AgentPay)
+- **Cost:** 0.2 USDC per transaction
+- **Transparent:** Fee shown before user signs
+- **Automatic:** Included in transaction batch
+- **Network:** Base Mainnet (USDC)
 
-### Payment Flow:
-1. **Prepare a batch** of transactions in the skill
-2. **Pay 0.2 USDC fee** to the developer address
-3. **Pay the seller** the requested USDC amount
-4. **Approve and deposit collateral** into Aave V3 from the user wallet
-5. **The user signs the batch** with their external wallet
+## 🔧 Setup
 
-### Recovery Time Calculation:
+### Required Environment Variables
 
-**The amount to recover is the PAYMENT sent to the seller, not the total collateral.**
+```bash
+# WalletConnect Project ID (FREE from cloud.walletconnect.com)
+WALLETCONNECT_PROJECT_ID=your_project_id_here
 
+# Base Mainnet RPC
+BASE_RPC_URL=https://mainnet.base.org
+
+# Contract addresses (Base Mainnet)
+USDC_ADDRESS=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
+AAVE_V3_POOL_ADDRESS=0xA238Dd80C259a72e81d7e4664a9801593F98d1c5
 ```
-Recovery Time = Payment Amount / Annual Yield from Aave Deposit
+
+### Quick Setup
+
+```bash
+npm install
+cp .env.example .env
+# Edit .env with your WalletConnect Project ID
+node scripts/check-configuration.js
 ```
 
-### Example: 0.1 USDC payment, 20x collateral, 8% buffer, 3% APY
+## 🚀 Quick Start
+
+### 1. Dry-run first (recommended)
+```bash
+node scripts/cli-wc2.js --dry-run --amount 0.1 --recipient 0x...
+```
+
+### 2. WalletConnect Mode (QR code)
+```bash
+node scripts/cli-wc2.js --walletconnect --amount 0.1 --recipient 0x...
+```
+**Flow:**
+1. Terminal shows QR code
+2. Scan with mobile wallet (or click link)
+3. Approve connection
+4. Sign 3 transactions in wallet
+
+### 3. HTML Wallet Mode (browser)
+```bash
+node scripts/cli-final.js --html-wallet --amount 0.1 --recipient 0x...
+```
+**Flow:**
+1. CLI generates HTML file
+2. Open in browser
+3. Connect wallet via Web3Modal
+4. Sign transactions
+
+### 4. Manual Mode (advanced)
+```bash
+node scripts/cli-wc2.js --manual --amount 0.1 --recipient 0x...
+```
+**Flow:**
+1. Save transactions as JSON
+2. Import to Revoke.cash
+3. Execute manually
+
+## 🎯 How It Works
+
+### Payment Flow
+
+1. **User connects wallet** via QR code or browser
+2. **3 transactions prepared:**
+   - 0.2 USDC → Developer fee
+   - Payment amount → Recipient
+   - Collateral amount → Aave V3
+3. **User approves each transaction** in their wallet
+4. **Transactions execute** on Base network
+5. **Capital recovers over time** via Aave yield
+
+### Recovery Calculation
+
+**Example:** 0.1 USDC payment, 20x collateral, 8% buffer, 3% APY
 
 ```
 Total Locked:      0.1 × 20 × 1.08 = 2.16 USDC
 Developer Fee:     0.20 USDC
-Seller Payment:    0.10 USDC
-Aave Deposit:      2.06 USDC
-Annual Yield:      2.06 × 3% = 0.0618 USDC/year
-Amount to Recover: 0.1 USDC
-Recovery Time:     0.1 / 0.0618 ≈ 592 days (~1.6 years)
+Payment:           0.10 USDC → Recipient
+Aave Deposit:      1.86 USDC
+Annual Yield:      1.86 × 3% = 0.0558 USDC/year
+Daily Yield:       0.0558 / 365 = 0.000153 USDC/day
+Recovery Time:     0.1 / 0.000153 ≈ 654 days
 ```
 
-### Why Higher Collateral = Faster Recovery:
+### Why Higher Collateral = Faster Recovery
 
 | Multiplier | Aave Deposit | Annual Yield | Recovery Time |
 |------------|-------------|--------------|---------------|
 | 3×         | 0.224 USDC  | 0.0067 USDC  | ~15 years     |
-| 5×         | 0.440 USDC  | 0.0132 USDC  | ~7.5 years    |
 | 10×        | 0.980 USDC  | 0.0294 USDC  | ~3.4 years    |
 | 20×        | 1.86 USDC   | 0.0558 USDC  | ~1.8 years    |
 
-More collateral deposited in Aave → more yield generated → faster recovery of the payment amount.
+More collateral = more yield = faster recovery!
 
-## 🚀 Quick Start
+## 🔧 Utility Scripts
 
-### Prerequisites
-- Node.js 18+
-- Base network wallet with ETH for gas
-- USDC tokens for collateral
-
-### Installation
+### Check Configuration
 ```bash
-cd your-project
-npm install
-```
-
-### Configuration
-1. Copy `.env.example` to `.env`
-2. Set your `BASE_RPC_URL` and verify the Aave/Base contract addresses
-
-### Usage
-```bash
-# Check configuration
 node scripts/check-configuration.js
+```
 
-# Safe simulation testing (no transactions)
+### Collateral Calculator
+```bash
+node scripts/collateral-calculator.js --amount 0.1 --deadline 90
+```
+
+### Test Suite
+```bash
 node scripts/test-realistic-payment.js
-
-# Recommended workflow:
-# Step 1: Test with dry-run first (no on-chain execution)
-node scripts/cli.js --dry-run --amount 0.1 --recipient 0x... --user-wallet 0x... --collateral 5 --buffer 8
-
-# Step 2: Prepare AgentPay batch for external wallet signing
-node scripts/cli.js --amount 0.1 --recipient 0x... --user-wallet 0x... --collateral 5 --buffer 8
-
-# Custom collateral multiplier
-node scripts/cli.js --amount 0.5 --recipient 0x... --user-wallet 0x... --collateral 10 --buffer 5
 ```
 
-## 📁 Project Structure
+## 💡 Tips & Best Practices
 
-```
-yield-farm-payment/
-├── SKILL.md                    # This documentation
-├── .env.example                # Configuration template
-├── package.json                # Dependencies and skill metadata
-├── scripts/
-│   ├── cli.js                  # CLI interface (AgentPay-only)
-│   ├── yield-farm-payment.js   # Core payment logic (active)
-│   ├── collateral-calculator.js # Collateral optimization
-│   ├── check-configuration.js  # Config validation
-│   └── test-realistic-payment.js # Comprehensive tests
-└── references/
-    ├── aave-addresses.md       # Aave contract addresses
-    └── v2.0-planned/           # Planned features for future release
-        ├── 10x-collateral-guide.md
-        ├── flexible-collateral-guide.md
-        └── x402-integration.md
-```
+1. **Start with --dry-run** to verify calculations
+2. **Use small amounts** for first tests (0.01 USDC)
+3. **WalletConnect QR code** works best with mobile wallets
+4. **HTML mode** for desktop browser wallets (MetaMask, etc.)
+5. **Manual mode** for batch execution via Revoke.cash
+6. **Check gas prices** before executing large amounts
 
-## 🔧 Configuration
+## 🛡️ Security
 
-### Environment Variables (.env)
-```bash
-# Required
-BASE_RPC_URL=https://...       # Base network RPC
+- **No private keys** stored or required
+- **User signs** all transactions in their own wallet
+- **Fee transparency** - 0.2 USDC shown before signing
+- **WalletConnect v2.0** - Industry standard
+- **Base Mainnet** - Secure, audited network
 
-# Aave V3 Contracts (Base)
-AAVE_V3_POOL_ADDRESS=0xA238Dd80C259a72e81d7e4664a9801593F98d1c5
-USDC_ADDRESS=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
-AAVE_USDC_TOKEN_ADDRESS=0x4e65fE4DbA92790696d040ac24Aa414708F5c0AB
+## 🤝 Support
 
-# Settings
-SKILL_FEE_USDC=0.2
-DEFAULT_COLLATERAL_MULTIPLIER=20
-DEFAULT_BUFFER_PERCENTAGE=8
-ESTIMATED_APY=0.03
-```
-
-## 🔒 Security & Safety
-
-### Built-in Protections
-- **Balance Verification**: Pre-transaction checks
-- **Gas Limit Monitoring**: Prevents excessive fees
-- **Transaction Retry**: 3 attempts with gas price escalation
-- **Nonce Management**: Handles concurrent transactions
-
-### Transaction Confirmation
-- **AgentPay Mode**: Batch preparation with external wallet signing
-- **Clear Transaction Preview**: Shows amount, recipient, collateral, and recovery estimates
-- **Amount Limits**: Maximum 1000 USDC per transaction
-- **Address Validation**: Verifies recipient and wallet addresses before execution
-
-### CLI Safety Flags
-```bash
-# Test with dry-run first (RECOMMENDED)
-node scripts/cli.js --dry-run --amount 0.1 --recipient 0x... --user-wallet 0x...
-
-# AgentPay batch preparation
-node scripts/cli.js --amount 0.1 --recipient 0x... --user-wallet 0x... --collateral 10 --buffer 8
-```
-
-### Risk Management
-- **Collateral Buffer**: 5-15% safety margin
-- **APY Estimation**: Conservative 3% default
-- **Multiplier Limits**: 3x minimum, 20x maximum
-
-## 🚨 Error Handling
-
-### Common Errors & Solutions
-- **"insufficient funds"**: Balance verification before transaction
-- **"nonce too low"**: Automatic nonce management
-- **Contract errors**: Detailed logging and fallback
-
-## 📈 Roadmap
-
-### v2.0 Planned
-- **Standard Mode**: Yield streaming via x402 protocol
-- **Smart Mode**: Deadline optimization
-- **x402 Integration**: Trustless automatic yield distribution
-- **Multi-token Support**: USDT, wETH, etc.
-
-- **AgentPay Mode**: Batch transaction preparation for external wallet signing
-- **Monetization**: 0.2 USDC fee per AgentPay transaction
-- **Agent Automation**: Support for autonomous agent execution
-
-### v2.0 Planned Features
-- **Standard Mode**: Yield streaming via x402 protocol
-- **Smart Mode**: Deadline optimization
-- **x402 Integration**: Trustless automatic yield distribution to sellers
-- **Multi-token Support**: USDT, wETH, etc.
+- **Issues:** GitHub repository
+- **Questions:** ClawHub discussion
+- **WalletConnect:** https://cloud.walletconnect.com
 
 ## 📄 License
 
-MIT License
-
-## 🙏 Acknowledgments
-
-- **Aave Protocol** for yield farming infrastructure
-- **Base Network** for low-cost L2 execution
-- **OpenClaw Community** for skill development framework
+MIT License - See LICENSE file for details.
 
 ---
 
-**YieldFarmPayment v1.1** — Agent-friendly payments with capital recovery on Base network. 🚀
+**Ready to automate payments with yield farming recovery!** 🚀
