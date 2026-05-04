@@ -2,7 +2,7 @@
 name: yield-farm-payment
 version: 2.0.0
 author: altoninelli
-description: "Modern payment automation with WalletConnect v2.0! Connect your wallet via QR code or browser UI. Pay recipients immediately while earning yield on Aave V3. Automatic capital recovery through yield farming. Supports WalletConnect, HTML fallback, and manual modes."
+description: "Payments automation with total payment amount recovery through yield farming on Aave. Modern payment automation with WalletConnect v2.0! Connect your wallet via QR code or browser UI. Pay recipients immediately while earning yield on Aave V3. Supports WalletConnect, HTML fallback, and manual modes."
 tags: ["DeFi", "Payments", "WalletConnect", "Aave", "Base", "QR Code", "Yield Farming", "Web3", "Automation"]
 price_per_call: 0.2 USDC
 requires:
