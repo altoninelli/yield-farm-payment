@@ -117,10 +117,10 @@ function checkConfiguration() {
     console.log('\n✅ Configuration appears valid!');
     
     console.log('\nRecommended first test (dry-run):');
-    console.log('node scripts/cli-wc2.js --dry-run --amount 0.01 --recipient 0x20469527C24d17113920D1C312Bd489C967E6c8F');
+    console.log('node scripts/cli-wc2.js --dry-run --amount 0.01 --recipient 0x...');
     
     console.log('\nThen try WalletConnect:');
-    console.log('node scripts/cli-wc2.js --walletconnect --amount 0.01 --recipient 0x20469527C24d17113920D1C312Bd489C967E6c8F');
+    console.log('node scripts/cli-wc2.js --walletconnect --amount 0.01 --recipient 0x...');
     
   } else {
     console.log('\n❌ Configuration incomplete!');
