@@ -230,3 +230,6 @@ MIT License - See [LICENSE](LICENSE) for details.
 ---
 
 **Ready to automate payments with modern wallet integration!** 🎯
+## Download History
+
+[![Download History](https://skill-history.com/chart/altoninelli/yield-farm-payment.svg)](https://skill-history.com/altoninelli/yield-farm-payment)
