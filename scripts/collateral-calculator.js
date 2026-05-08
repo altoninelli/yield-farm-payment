@@ -144,40 +144,16 @@ function calculateOptimalCollateral({
 /**
  * Generate CLI command for optimal configuration
  */
-/**
- * Generate CLI command for optimal configuration
- */
 function generateCLICommand(results) {
-  const amount = results.amountToPay;
-  const collateral = results.collateralMultiplier.toFixed(1);
-  const buffer = results.bufferPercentage;
-  
-  const wcCommand = `node scripts/cli-wc2.js \\
-  --walletconnect \\
-  --amount ${amount} \\
+  const command = `node scripts/cli.js \\
+  --mode standard \\
+  --amount ${results.amountToPay} \\
   --recipient 0xRecipientAddress \\
-  --collateral ${collateral} \\
-  --buffer ${buffer}`;
+  --token ${results.token} \\
+  --collateral ${results.collateralMultiplier.toFixed(1)} \\
+  --buffer ${results.bufferPercentage}`;
   
-  const htmlCommand = `node scripts/cli-final.js \\
-  --html-wallet \\
-  --amount ${amount} \\
-  --recipient 0xRecipientAddress \\
-  --collateral ${collateral} \\
-  --buffer ${buffer}`;
-  
-  const manualCommand = `node scripts/cli-wc2.js \\
-  --manual \\
-  --amount ${amount} \\
-  --recipient 0xRecipientAddress \\
-  --collateral ${collateral} \\
-  --buffer ${buffer}`;
-  
-  return {
-    wcCommand,
-    htmlCommand,
-    manualCommand
-  };
+  return command;
 }
 
 /**
@@ -314,27 +290,15 @@ Examples:
       console.log('🚀 READY-TO-USE CONFIGURATION');
       console.log('='.repeat(80));
       
-      const commands = generateCLICommand(results);
+      console.log(`\nCLI Command:`);
+      console.log(generateCLICommand(results));
       
-      console.log(`\n📱 WalletConnect v2.0 (Recommended):`);
-      console.log(commands.wcCommand);
-      
-      console.log(`\n🌐 HTML Wallet Mode (User-friendly):`);
-      console.log(commands.htmlCommand);
-      
-      console.log(`\n📄 Manual Execution (Advanced):`);
-      console.log(commands.manualCommand);
-      
-      console.log(`\n🧪 Dry-run first:`);
-      console.log(`node scripts/cli-wc2.js --dry-run --amount ${results.amountToPay} --recipient 0x...`);
-      
-      console.log(`\nJavaScript API (WalletConnect):`);
-      console.log(`const { yieldFarmPaymentWC2 } = require('./scripts/yield-farm-payment-wc2.js');
-  
-yieldFarmPaymentWC2({
+      console.log(`\nJavaScript API:`);
+      console.log(`yieldFarmPayment({
+  mode: 'standard',
   amountToPay: ${results.amountToPay},
   recipientAddress: '0xRecipientAddress',
-  useWalletConnect: true,
+  token: '${results.token}',
   collateralMultiplier: ${results.collateralMultiplier.toFixed(1)},
   bufferPercentage: ${results.bufferPercentage}
 });`);
