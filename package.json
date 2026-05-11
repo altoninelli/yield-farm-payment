@@ -1,14 +1,14 @@
 {
   "name": "yield-farm-payment",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Pay any seller immediately on Base and recover capital via Aave V3 yield farming",
   "clawhub": {
-    "payout_address": "0x1C7f7c428dE42B8402F8331612131cc8bC126369",
     "pricing": {
-      "type": "free donation",
-      "price": 0,
+      "type": "fixed_fee",
+      "price": 0.2,
       "currency": "USDC",
-      "chain": "base"
+      "chain": "base",
+      "description": "Fixed 0.2 USDC fee per successful payment. Fee is charged ONLY after both payment to recipient and collateral deposit to Aave succeed."
     },
     "env": {
       "PRIVATE_KEY": {

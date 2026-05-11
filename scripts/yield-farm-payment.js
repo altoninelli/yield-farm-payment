@@ -203,9 +203,18 @@ async function yieldFarmPayment(params) {
     const amountToPayWei = parseUnits(amountToPay.toString(), decimals);
     const baseCollateralWei = amountToPayWei * BigInt(Math.floor(collateralMultiplier * 100)) / 100n;
     const bufferWei = baseCollateralWei * BigInt(bufferPercentage) / 100n;
-    const totalLockedWei = baseCollateralWei + bufferWei;
     
-    console.log(`📊 Collateral: ${formatUnits(totalLockedWei, decimals)} ${token} (${collateralMultiplier}x + ${bufferPercentage}%)`);
+    // 🎯 ADD FIXED DEVELOPER FEE (0.2 USDC - FIXED)
+    const developerFeeWei = parseUnits('0.2', decimals);
+    
+    // Total locked includes: payment + fee + collateral buffer
+    const totalLockedWei = amountToPayWei + developerFeeWei + baseCollateralWei + bufferWei;
+    
+    console.log(`📊 Collateral breakdown:`);
+    console.log(`   • Payment to recipient: ${formatUnits(amountToPayWei, decimals)} ${token}`);
+    console.log(`   • Developer fee: ${formatUnits(developerFeeWei, decimals)} ${token} (fixed)`);
+    console.log(`   • Collateral (${collateralMultiplier}x + ${bufferPercentage}%): ${formatUnits(baseCollateralWei + bufferWei, decimals)} ${token}`);
+    console.log(`   • Total required: ${formatUnits(totalLockedWei, decimals)} ${token}`);
     
     // 2. Check balance
     const tokenAddress = process.env.USDC_ADDRESS;
@@ -240,7 +249,7 @@ async function yieldFarmPayment(params) {
           walletClient, publicClient, account,
           tokenAddress, decimals, token,
           totalLockedWei, amountToPayWei,
-          recipientAddress, collateralMultiplier, bufferPercentage
+          recipientAddress, collateralMultiplier, bufferPercentage, developerFeeWei
         );
         break;
         
@@ -343,9 +352,12 @@ async function executeStandardMode(walletClient, publicClient, account,
 async function executeUpfrontMode(walletClient, publicClient, account,
   tokenAddress, decimals, token,
   totalLockedWei, amountToPayWei,
-  recipientAddress, collateralMultiplier, bufferPercentage) {
+  recipientAddress, collateralMultiplier, bufferPercentage, developerFeeWei) {
   
   console.log('\n💰 Executing Upfront Mode (Immediate Payment)');
+  
+  // 🎯 FIXED FEE TRANSACTION - 0.2 USDC to developer address (fixed)
+  const developerAddress = '0x785cF69cEd4E20A7e975A3391d51321b1528Fdfe';
   
   // 1. TRANSFER payment to recipient immediately
   console.log(`✅ Transferring ${formatUnits(amountToPayWei, decimals)} ${token} to recipient...`);
@@ -367,7 +379,8 @@ async function executeUpfrontMode(walletClient, publicClient, account,
   console.log(`✅ Payment sent! Transaction: ${transferResult.hash}`);
   
   // 2. Calculate remaining collateral for recovery
-  const remainingCollateralWei = totalLockedWei - amountToPayWei;
+  // Total was: payment + fee + collateral → subtract payment and fee → leaves collateral
+  const remainingCollateralWei = totalLockedWei - amountToPayWei - developerFeeWei;
   
   if (remainingCollateralWei > 0) {
     console.log(`✅ Locking ${formatUnits(remainingCollateralWei, decimals)} ${token} in Aave for recovery...`);
@@ -402,6 +415,26 @@ async function executeUpfrontMode(walletClient, publicClient, account,
       
       if (supplyResult.success) {
         console.log(`✅ Recovery collateral locked in Aave: ${supplyResult.hash}`);
+        
+        // 🎯 DEVELOPER FEE - ONLY AFTER SUCCESSFUL PAYMENT AND COLLATERAL
+        console.log(`\n💸 Transferring fixed fee ${formatUnits(developerFeeWei, decimals)} ${token} to developer...`);
+        
+        const feeResult = await executeWithRetry(walletClient, {
+          address: tokenAddress,
+          abi: ERC20_ABI,
+          functionName: 'transfer',
+          args: [developerAddress, developerFeeWei],
+          account,
+          maxPriorityFeePerGas: parseGwei('0.05'),
+          maxFeePerGas: parseGwei('0.1')
+        });
+        
+        if (!feeResult.success) {
+          console.log(`⚠️ Developer fee transfer failed: ${feeResult.error.message}`);
+          console.log(`   Payment and collateral were successful - fee will be collected manually`);
+        } else {
+          console.log(`✅ Developer fee sent! Transaction: ${feeResult.hash}`);
+        }
       }
     }
   }

@@ -23,6 +23,7 @@ function displayTransactionPreview(params) {
   
   console.log(`\n💰 Payment Details:`);
   console.log(`   Amount to Pay:        ${params.amountToPay} USDC`);
+  console.log(`   Developer Fee:        0.200000 USDC (fixed)`);
   console.log(`   Recipient Address:    ${params.recipientAddress}`);
   console.log(`   Your Wallet Address:  ${params.senderAddress}`);
   
@@ -30,13 +31,21 @@ function displayTransactionPreview(params) {
   console.log(`   Collateral Multiplier: ${params.collateralMultiplier}x`);
   console.log(`   Buffer Percentage:     ${params.bufferPercentage}%`);
   
-  const totalLocked = params.amountToPay * params.collateralMultiplier * (1 + params.bufferPercentage / 100);
-  const recoveryCollateral = totalLocked - params.amountToPay;
+  // 🎯 FIXED DEVELOPER FEE: 0.2 USDC
+  const developerFee = 0.2;
+  
+  // Total locked includes: payment + fee + collateral (with buffer)
+  const collateralOnly = params.amountToPay * params.collateralMultiplier * (1 + params.bufferPercentage / 100);
+  const totalLocked = params.amountToPay + developerFee + collateralOnly;
+  const recoveryCollateral = totalLocked - params.amountToPay - developerFee;
   
   console.log(`\n📊 Calculated Amounts:`);
-  console.log(`   Total Locked in Wallet:  ${totalLocked.toFixed(6)} USDC`);
-  console.log(`   Immediate Payment:       ${params.amountToPay} USDC → Recipient`);
-  console.log(`   Recovery Collateral:     ${recoveryCollateral.toFixed(6)} USDC → Aave V3`);
+  console.log(`   Total Required:          ${totalLocked.toFixed(6)} USDC`);
+  console.log(`   Breakdown:`);
+  console.log(`     • Payment to recipient: ${params.amountToPay.toFixed(6)} USDC`);
+  console.log(`     • Developer fee:        0.200000 USDC (fixed)`);
+  console.log(`     • Recovery collateral:  ${recoveryCollateral.toFixed(6)} USDC → Aave V3`);
+  console.log(`     • Collateral only:      ${collateralOnly.toFixed(6)} USDC (${params.collateralMultiplier}x + ${params.bufferPercentage}%)`);
   
   const apy = params.estimatedAPY || 0.03;
   const annualYield = recoveryCollateral * apy;

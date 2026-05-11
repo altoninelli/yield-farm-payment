@@ -134,7 +134,6 @@ async function runRealisticTests() {
   console.log('   - PRIVATE_KEY set (secure wallet)');
   console.log('   - BASE_RPC_URL = https://mainnet.base.org');
   console.log('   - Contract addresses verified for Base');
-  console.log('   - SKILL_FEE_USDC = 0');
   console.log('   - ESTIMATED_APY = 0.03 (3%)');
   
   console.log('\n2. 💰 Funds available:');

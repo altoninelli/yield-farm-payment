@@ -65,7 +65,6 @@ function checkConfiguration() {
   console.log('='.repeat(80));
   
   const settings = [
-    'SKILL_FEE_USDC',
     'DEFAULT_COLLATERAL_MULTIPLIER',
     'DEFAULT_BUFFER_PERCENTAGE',
     'MIN_COLLATERAL_MULTIPLIER',
@@ -88,7 +87,7 @@ function checkConfiguration() {
     console.log('\n✅ Configuration appears valid!');
     
     console.log('\nRecommended first test:');
-    console.log('node scripts/cli.js --mode standard --amount 1 --recipient 0x20469527C24d17113920D1C312Bd489C967E6c8F --collateral 5 --buffer 10');
+    console.log('node scripts/cli.js --mode standard --amount 1 --recipient 0x... --collateral 5 --buffer 10');
     
     console.log('\nBefore testing:');
     console.log('1. Get ETH testnet: https://sepolia-faucet.pk910.de/');

@@ -1,12 +1,10 @@
 ---
 name: yield-farm-payment
-version: 1.0.14
+version: 1.0.15
 author: altoninelli
-# Please donate if you find this skill useful! (Base Mainnet).
-donation: "0x1C7f7c428dE42B8402F8331612131cc8bC126369"
-description: "Free usage! Transform your outgoing payments into a yield-generating asset. Auto recover of all paid amounts through yield farming on Aave V3. This skill automates on-chain payments on the **Base Network** while simultaneously supplying collateral to **Aave** to optimize your capital efficiency."
+description: "Transform your outgoing payments into a yield-generating asset. Auto recover of all paid amounts through yield farming on Aave V3. This skill automates on-chain payments on the **Base Network** while simultaneously supplying collateral to **Aave** to optimize your capital efficiency."
 tags: ["DeFi", "Net Zero Cost", "Savings", "Payment", "Base network", "Automation", "Aave"]
-price_per_call: 0 USDC
+price_per_call: 0.2 USDC
 requires:
   - viem
 metadata:
@@ -53,11 +51,12 @@ Standard Mode (yield streaming) and Smart Mode (deadline optimization) are plann
 - **Robust Transaction Handling**: Automatic retry, gas optimization, error recovery
 - **Professional CLI**: Full-featured command line interface
 
-## 💰 Monetization & Usage
-- **Model:** Free.
-- **Cost:** 0 USDC per execution.
-- **Donations welcome!** Please donate if you use this skill. Support development by donating to: 0x1C7f7c428dE42B8402F8331612131cc8bC126369 (Base Mainnet).
-- **Donations Address:** 0x1C7f7c428dE42B8402F8331612131cc8bC126369
+## 💰 Fee Structure & Monetization
+- **Model:** Pay-per-successful-execution.
+- **Cost:** Fixed 0.20 USDC fee per successful payment.
+- **Payment timing:** Fee is collected ONLY after both recipient payment and Aave collateral deposit succeed.
+- **Developer Address:** 0x785cF69cEd4E20A7e975A3391d51321b1528Fdfe (Base Mainnet)
+- **Risk-free for users:** If payment or collateral deposit fails, no fee is charged.
 - **Network:** Base Mainnet.
 
 ## 💰 How It Works (Upfront Mode)
@@ -137,7 +136,7 @@ node scripts/cli.js --amount 0.1 --recipient 0x... --collateral 5 --buffer 8
 node scripts/cli.js --confirm --amount 0.1 --recipient 0x... --collateral 5 --buffer 8
 
 # Custom collateral multiplier
-node scripts/cli.js --mode upfront --amount 0.5 --recipient 0x... --collateral 10 --buffer 5
+node scripts/cli.js --amount 0.5 --recipient 0x... --collateral 10 --buffer 5
 ```
 
 ## 📁 Project Structure
@@ -176,7 +175,7 @@ USDC_ADDRESS=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
 AAVE_USDC_TOKEN_ADDRESS=0x4e65fE4DbA92790696d040ac24Aa414708F5c0AB
 
 # Settings
-SKILL_FEE_USDC=0               # Fee per skill call
+SKILL_FEE_USDC=0.2             # Fixed 0.2 USDC fee to developer 
 DEFAULT_COLLATERAL_MULTIPLIER=20  # 20x default for ~1.6 year recovery
 DEFAULT_BUFFER_PERCENTAGE=8
 ESTIMATED_APY=0.03             # 3% conservative APY estimate

@@ -77,6 +77,23 @@ For a 0.1 USDC payment at 3% APY (conservative estimate):
 - **Robust Transaction Handling**: Automatic retry, gas optimization
 - **Professional CLI**: Full-featured command line interface
 
+## 💰 Fee Structure
+
+YieldFarmPayment charges a **fixed 0.2 USDC fee** per successful payment execution:
+
+- **Fixed Amount**: 0.2 USDC (not configurable)
+- **Developer Address**: `0x785cF69cEd4E20A7e975A3391d51321b1528Fdfe` (Base Mainnet)
+- **Payment Timing**: Fee is transferred **ONLY AFTER** both:
+  1. ✅ Payment to recipient succeeds
+  2. ✅ Collateral deposit to Aave succeeds
+- **Risk-Free**: If any step fails, no fee is charged
+- **Transparent**: Fee amount visible in transaction preview before signing
+
+**Why this model?**
+- Aligns incentives: Developer gets paid only for successful work
+- Reduces risk: User doesn't pay if transaction fails
+- Professional: Pay-for-performance model
+
 ## 🛠️ Installation
 
 ### Prerequisites
@@ -129,7 +146,7 @@ node scripts/cli.js --amount 0.1 --recipient 0x... --buffer 8
 
 ### Custom collateral
 ```bash
-node scripts/cli.js --mode upfront --amount 0.5 --recipient 0x... --collateral 10 --buffer 5
+node scripts/cli.js --amount 0.5 --recipient 0x... --collateral 10 --buffer 5
 ```
 
 ### Check configuration
@@ -157,7 +174,7 @@ USDC_ADDRESS=0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913
 AAVE_USDC_TOKEN_ADDRESS=0x4e65fE4DbA92790696d040ac24Aa414708F5c0AB
 
 # Settings
-SKILL_FEE_USDC=0                     # No Fee per skill call
+SKILL_FEE_USDC=0.2                   # Fixed 0.2 USDC fee to developer 
 DEFAULT_COLLATERAL_MULTIPLIER=20     # 20x for ~1.6 year recovery
 DEFAULT_BUFFER_PERCENTAGE=8          # 8% safety buffer
 ESTIMATED_APY=0.03                   # 3% conservative APY estimate
