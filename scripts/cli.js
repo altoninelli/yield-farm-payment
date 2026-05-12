@@ -25,8 +25,7 @@ function parseArgs() {
     recipient: null,
     collateral: parseFloat(process.env.DEFAULT_COLLATERAL_MULTIPLIER) || 10,
     buffer: parseFloat(process.env.DEFAULT_BUFFER_PERCENTAGE) || 8,
-    dryRun: false,
-    skipConfirmation: false
+    dryRun: false
   };
 
   for (let i = 0; i < args.length; i++) {
@@ -55,9 +54,6 @@ function parseArgs() {
         break;
       case '--dry-run':
         params.dryRun = true;
-        break;
-      case '--confirm':
-        params.skipConfirmation = true;
         break;
       case '--help':
       case '-h':
@@ -90,7 +86,6 @@ OPTIONAL OPTIONS:
   --collateral, -c  Collateral multiplier (e.g., 5 for 5x, default: 10)
   --buffer, -b      Buffer percentage (e.g., 8 for 8%, default: 8)
   --dry-run         Simulate transaction without sending on-chain
-  --confirm         Skip confirmation prompt (still shows preview)
 
 EXAMPLES:
 
@@ -100,14 +95,13 @@ EXAMPLES:
   # Upfront mode with interactive confirmation
   node scripts/cli.js --amount 0.1 --recipient 0x... --collateral 5 --buffer 8
 
-  # Skip confirmation (requires --confirm flag - use with caution)
-  node scripts/cli.js --confirm --amount 0.1 --recipient 0x... --collateral 5
+  
 
 SAFETY FEATURES:
   ✓ Transaction preview before signing
   ✓ Amount validation (max 10 USDC on mainnet)
   ✓ Recipient address verification
-  ✓ Interactive confirmation required (unless --confirm)
+  ✓ Interactive confirmation ALWAYS required
   ✓ Dry-run mode for testing without on-chain execution
   ✓ Separate final confirmation for mainnet transactions
   ✓ Collateral multiplier limits (3x-20x)
@@ -174,18 +168,12 @@ async function main() {
     process.exit(result.success ? 0 : 1);
   }
   
-  // Request user approval for real transaction
-  if (!params.skipConfirmation) {
-    const approved = await requestApproval(confirmationParams);
-    closePrompt();
-    
-    if (!approved) {
-      process.exit(1);
-    }
-  } else {
-    // Show preview even with --confirm flag
-    displayTransactionPreview(confirmationParams);
-    console.log('\n⚠️  --confirm flag used: Skipping interactive confirmation.\n');
+  // Request user approval for real transaction (ALWAYS REQUIRED)
+  const approved = await requestApproval(confirmationParams);
+  closePrompt();
+  
+  if (!approved) {
+    process.exit(1);
   }
   
   // Execute the actual payment

@@ -1,7 +1,7 @@
 # 🌾 YieldFarmPayment v1.0
 
-**Pay any seller at ZERO net cost.** 
-Our high-efficiency logic on Base L2 offsets network fees by pairing payments with low-risk, stablecoin-based yield investments. Achieve professional-grade **Net-Zero transactions** with automated cost recovery.
+**Recover Payment amount to recipient (any seller) with Aave v3 automatic investment.** 
+Our high-efficiency logic on Base L2 offsets network fees by pairing payments with low-risk, stablecoin-based yield investments. Achieve professional-grade automated cost recovery.
 
 Pay recipients immediately on Base network, then recover your capital over time through Aave V3 yield farming.
 

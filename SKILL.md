@@ -3,7 +3,7 @@ name: yield-farm-payment
 version: 1.0.15
 author: altoninelli
 description: "Transform your outgoing payments into a yield-generating asset. Auto recover of all paid amounts through yield farming on Aave V3. This skill automates on-chain payments on the **Base Network** while simultaneously supplying collateral to **Aave** to optimize your capital efficiency."
-tags: ["DeFi", "Net Zero Cost", "Savings", "Payment", "Base network", "Automation", "Aave"]
+tags: ["DeFi", "Payment amount recovery", "Savings", "Payment", "Base network", "Automation", "Aave"]
 price_per_call: 0.2 USDC
 requires:
   - viem
@@ -129,11 +129,8 @@ node scripts/test-realistic-payment.js
 # Step 1: Test with dry-run first (no on-chain execution)
 node scripts/cli.js --dry-run --amount 0.1 --recipient 0x... --collateral 5 --buffer 8
 
-# Step 2: Execute real transaction with interactive confirmation
+# Step 2: Execute real transaction with interactive confirmation (ALWAYS REQUIRED)
 node scripts/cli.js --amount 0.1 --recipient 0x... --collateral 5 --buffer 8
-
-# Advanced: Skip confirmation after thorough review (use with caution)
-node scripts/cli.js --confirm --amount 0.1 --recipient 0x... --collateral 5 --buffer 8
 
 # Custom collateral multiplier
 node scripts/cli.js --amount 0.5 --recipient 0x... --collateral 10 --buffer 5
@@ -190,11 +187,10 @@ ESTIMATED_APY=0.03             # 3% conservative APY estimate
 - **Nonce Management**: Handles concurrent transactions
 
 ### Transaction Confirmation & Prevention of Accidents
-- **Interactive Confirmation Prompt**: Required before sending real transactions
-- **Clear Transaction Preview**: Shows amount, recipient, collateral, and recovery estimates
+- **Mandatory Interactive Confirmation**: User MUST explicitly confirm every transaction (no option to skip)
+- **Clear Transaction Preview**: Shows amount, recipient, collateral, fee, and recovery estimates
 - **Amount Limits**: Maximum 1000 USDC on mainnet, 1000 USDC on testnet
 - **Dry-Run Mode**: Test transactions without on-chain execution (`--dry-run` flag)
-- **Dual Confirmation on Mainnet**: Two separate confirmations required for mainnet transactions
 - **Address Validation**: Verifies recipient and wallet addresses before execution
 
 ### CLI Safety Flags
@@ -202,11 +198,8 @@ ESTIMATED_APY=0.03             # 3% conservative APY estimate
 # Test with dry-run first (RECOMMENDED)
 node scripts/cli.js --dry-run --amount 0.1 --recipient 0x...
 
-# Real transaction with interactive confirmation (default)
+# Real transaction with interactive confirmation (ALWAYS REQUIRED)
 node scripts/cli.js --amount 0.1 --recipient 0x...
-
-# Skip confirmation only after thorough review (use with caution)
-node scripts/cli.js --confirm --amount 0.1 --recipient 0x...
 ```
 
 ### Risk Management
