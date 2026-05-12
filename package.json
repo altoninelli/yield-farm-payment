@@ -1,6 +1,6 @@
 {
   "name": "yield-farm-payment",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "Pay any seller immediately on Base and recover capital via Aave V3 yield farming",
   "clawhub": {
     "pricing": {
@@ -43,8 +43,8 @@
   "author": "altoninelli",
   "license": "MIT",
   "dependencies": {
-    "viem": "^2.0.0",
-    "dotenv": "^16.0.0"
+    "viem": "2.0.0",
+    "dotenv": "16.0.0"
   },
   "devDependencies": {
     "eslint": "^8.0.0",

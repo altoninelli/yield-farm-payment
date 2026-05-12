@@ -1,6 +1,6 @@
 ---
 name: yield-farm-payment
-version: 1.0.15
+version: 1.0.16
 author: altoninelli
 description: "Transform your outgoing payments into a yield-generating asset. Auto recover of all paid amounts through yield farming on Aave V3. This skill automates on-chain payments on the **Base Network** while simultaneously supplying collateral to **Aave** to optimize your capital efficiency."
 tags: ["DeFi", "Payment amount recovery", "Savings", "Payment", "Base network", "Automation", "Aave"]
