@@ -41,12 +41,13 @@ node scripts/cli.js --amount 0.1 --recipient 0x... --buffer 8
 
 ```
 1. You want to pay 0.1 USDC to a seller
-2. System locks 2.16 USDC total (0.1 × 20x × 1.08 buffer)
+2. System calculates total required: 0.1 + 0.2 fee + (0.1 × 20x × 1.08 buffer) = 2.46 USDC
 3. 0.1 USDC is transferred IMMEDIATELY to seller
-4. 2.06 USDC is deposited in Aave V3
-5. Aave generates ~3% APY = 0.0618 USDC/year on the deposit
-6. You recover the 0.1 USDC payment in ~592 days (~1.6 years)
-7. After recovery, the 2.06 USDC collateral is still yours in Aave
+4. 0.2 USDC fee is transferred to developer (only after successful steps 3+5)
+5. 2.16 USDC is deposited in Aave V3 for recovery
+6. Aave generates ~3% APY = 0.0648 USDC/year on the deposit
+7. You recover the 0.1 USDC payment in ~565 days (~1.55 years)
+8. After recovery, the 2.16 USDC collateral is still yours in Aave
 ```
 
 ### ⚡ Key Insight: Recovery = Payment Amount, NOT Collateral

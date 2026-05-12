@@ -99,7 +99,7 @@ EXAMPLES:
 
 SAFETY FEATURES:
   ✓ Transaction preview before signing
-  ✓ Amount validation (max 10 USDC on mainnet)
+  ✓ Amount validation (max 1000 USDC payment + collateral up to ~21,600 USDC total)
   ✓ Recipient address verification
   ✓ Interactive confirmation ALWAYS required
   ✓ Dry-run mode for testing without on-chain execution

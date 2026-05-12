@@ -1,6 +1,6 @@
 ---
 name: yield-farm-payment
-version: 1.0.16
+version: 1.0.17
 author: altoninelli
 description: "Transform your outgoing payments into a yield-generating asset. Auto recover of all paid amounts through yield farming on Aave V3. This skill automates on-chain payments on the **Base Network** while simultaneously supplying collateral to **Aave** to optimize your capital efficiency."
 tags: ["DeFi", "Payment amount recovery", "Savings", "Payment", "Base network", "Automation", "Aave"]
@@ -62,11 +62,12 @@ Standard Mode (yield streaming) and Smart Mode (deadline optimization) are plann
 ## 💰 How It Works (Upfront Mode)
 
 ### Payment Flow:
-1. **Calculate total collateral**: `payment × multiplier × (1 + buffer%)`
-2. **Transfer payment immediately** to recipient (seller gets paid NOW)
-3. **Deposit remaining collateral** in Aave V3
-4. **Yield accumulates** on deposited collateral
-5. **Buyer recovers the payment amount** over time via yield
+1. **Calculate total required**: `payment + 0.2 USDC fee + (payment × multiplier × (1 + buffer%))`
+2. **Transfer 0.2 USDC fee** to developer (only after successful payment + collateral)
+3. **Transfer payment immediately** to recipient (seller gets paid NOW)
+4. **Deposit remaining collateral** in Aave V3
+5. **Yield accumulates** on deposited collateral
+6. **Buyer recovers the payment amount** over time via yield
 
 ### Recovery Time Calculation:
 
@@ -79,13 +80,15 @@ Recovery Time = Payment Amount / Annual Yield from Aave Deposit
 ### Example: 0.1 USDC payment, 20x collateral, 8% buffer, 3% APY
 
 ```
-Total Locked:      0.1 × 20 × 1.08 = 2.16 USDC
+Collateral Only:   0.1 × 20 × 1.08 = 2.16 USDC
+Developer Fee:     0.2 USDC (fixed, paid only after success)
 Immediate Payment: 0.1 USDC → sent to recipient
-Aave Deposit:      2.16 - 0.1 = 2.06 USDC
+Total Required:    0.1 + 0.2 + 2.16 = 2.46 USDC
+Aave Deposit:      2.46 - 0.1 - 0.2 = 2.16 USDC
 Aave example APY   ~3% 
-Annual Yield:      2.06 × 3% = 0.0618 USDC/year
+Annual Yield:      2.16 × 3% = 0.0648 USDC/year
 Amount to Recover: 0.1 USDC (the payment, NOT the collateral)
-Recovery Time:     0.1 / 0.0618 ≈ 592 days (~1.6 years)
+Recovery Time:     0.1 / 0.0648 ≈ 565 days (~1.55 years)
 ```
 
 ### Why Higher Collateral = Faster Recovery:

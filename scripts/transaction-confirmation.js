@@ -99,6 +99,20 @@ function validateTransaction(params) {
     errors.push(`❌ Amount exceeds limit: maximum ${maxAmount} USDC (got ${params.amountToPay})`);
   }
   
+  // 🚨 EXTRA WARNING: If payment > 10 USDC on mainnet, show total amount warning
+  if (isMainnet && params.amountToPay > 10) {
+    const developerFee = 0.2; // Fixed developer fee
+    const collateralOnly = params.amountToPay * params.collateralMultiplier * (1 + params.bufferPercentage / 100);
+    const totalRequired = params.amountToPay + developerFee + collateralOnly;
+    
+    console.warn('\n🚨 HIGH AMOUNT WARNING:');
+    console.warn(`   Payment: ${params.amountToPay} USDC (exceeds 10 USDC warning threshold)`);
+    console.warn(`   Developer fee: 0.2 USDC (fixed)`);
+    console.warn(`   Collateral (${params.collateralMultiplier}x + ${params.bufferPercentage}%): ${collateralOnly.toFixed(2)} USDC`);
+    console.warn(`   TOTAL REQUIRED FROM WALLET: ${totalRequired.toFixed(2)} USDC`);
+    console.warn(`   This is ~${Math.round(totalRequired / params.amountToPay)}x the payment amount!`);
+  }
+  
   return {
     valid: errors.length === 0,
     errors

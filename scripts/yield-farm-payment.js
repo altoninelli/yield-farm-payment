@@ -181,6 +181,15 @@ async function yieldFarmPayment(params) {
     };
   }
   
+  // 🚨 HIGH AMOUNT WARNING on mainnet (> 10 USDC payment)
+  if (isMainnet && amountToPay > 10) {
+    console.warn(`\n🚨 HIGH AMOUNT WARNING:`);
+    console.warn(`   Payment amount (${amountToPay} USDC) exceeds 10 USDC warning threshold`);
+    console.warn(`   With ${collateralMultiplier}x collateral + ${bufferPercentage}% buffer,`);
+    console.warn(`   total required from wallet will be ~${Math.round(amountToPay * collateralMultiplier * (1 + bufferPercentage/100) / amountToPay)}x the payment amount`);
+    console.warn(`   Please review the transaction preview carefully!\n`);
+  }
+  
   // Setup clients
   const account = privateKeyToAccount(process.env.PRIVATE_KEY);
   const publicClient = createPublicClient({
