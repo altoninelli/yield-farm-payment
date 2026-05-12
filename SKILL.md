@@ -1,6 +1,6 @@
 ---
 name: yield-farm-payment
-version: 1.0.17
+version: 1.0.18
 author: altoninelli
 description: "Transform your outgoing payments into a yield-generating asset. Auto recover of all paid amounts through yield farming on Aave V3. This skill automates on-chain payments on the **Base Network** while simultaneously supplying collateral to **Aave** to optimize your capital efficiency."
 tags: ["DeFi", "Payment amount recovery", "Savings", "Payment", "Base network", "Automation", "Aave"]
@@ -63,9 +63,9 @@ Standard Mode (yield streaming) and Smart Mode (deadline optimization) are plann
 
 ### Payment Flow:
 1. **Calculate total required**: `payment + 0.2 USDC fee + (payment × multiplier × (1 + buffer%))`
-2. **Transfer 0.2 USDC fee** to developer (only after successful payment + collateral)
-3. **Transfer payment immediately** to recipient (seller gets paid NOW)
-4. **Deposit remaining collateral** in Aave V3
+2. **Transfer payment immediately** to recipient (seller gets paid NOW)
+3. **Deposit remaining collateral** in Aave V3
+4. **If steps 2+3 succeed**: Transfer 0.2 USDC fee to developer
 5. **Yield accumulates** on deposited collateral
 6. **Buyer recovers the payment amount** over time via yield
 
